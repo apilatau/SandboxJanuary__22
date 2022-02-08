@@ -12,7 +12,6 @@ namespace DataLayer.Data
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Map> Maps { get; set; }
-        public DbSet<Office> Offices { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Reserv> Reservrs { get; set; }
         public DbSet<WorkingDesk> WorkingDesks { get; set; }
