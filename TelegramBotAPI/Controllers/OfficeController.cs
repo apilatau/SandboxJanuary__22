@@ -9,8 +9,10 @@ using System.Threading.Tasks;
 namespace PresentationLayer.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
+   
     
-    public class OfficeController : ControllerBase
+    public class OfficeController : Controller
     {
         [HttpPost]
         public async Task<IActionResult> AddOffice()
