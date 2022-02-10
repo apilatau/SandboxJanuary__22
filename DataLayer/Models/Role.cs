@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DataLayer.Models
 {
-    internal class Role
+    public class Role
     {
+        public int Id { get; set; }
+
+        [Required]
+        public string RoleName { get; set; }
+
+        public ICollection<User> Users { get; set; }
     }
 }
