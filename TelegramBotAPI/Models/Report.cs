@@ -2,12 +2,14 @@
 
 namespace TelegramBotAPI.Models
 {
-    public class City
+    public class Report
     {
         [Key]
+        public int ReportId { get; set; }
+        public int UserId { get; set; }
         public int CityId { get; set; }
-        public string Name { get; set; }
         public int CountryId { get; set; }
-        //public bool IsCityCenter { get; set; }
+        public int OfficeId { get; set; }
+        public int ReservesId { get; set; }
     }
 }

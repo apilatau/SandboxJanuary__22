@@ -2,10 +2,10 @@
 
 namespace TelegramBotAPI.Models
 {
-    public class Country
+    public class BookType
     {
         [Key]
-        public int CountryId { get; set; }
-        public string Name { get; set; }
+        public int BookTypeId { get; set; }
+        public string Type { get; set; }
     }
 }
