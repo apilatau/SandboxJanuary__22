@@ -19,6 +19,8 @@ builder.Services.AddHttpClient("TelegramDotNetBot")
     .AddTypedClient<ITelegramBotClient>(httpClient =>
         new TelegramBotClient(BotConfig.Token, httpClient));
 
+builder.Services.AddScoped<HandleUpdateService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
