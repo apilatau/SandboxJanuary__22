@@ -28,7 +28,7 @@ namespace BookBot.Services
             
             _logger.LogInformation("Setting webhook");
             
-            await botClient.SendTextMessageAsync(chatId: 718428065, text: "WebHook is being instlled");
+            await botClient.SendTextMessageAsync(chatId: 718428065, text: "WebHook has been instlled!");
             
             await botClient.SetWebhookAsync(
                 url: webhookAddress,
