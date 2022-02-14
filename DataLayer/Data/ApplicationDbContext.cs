@@ -10,6 +10,11 @@ namespace DataLayer.Data
 
         }
 
-        public DbSet<Employee> Employees { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Map> Maps { get; set; }
+        public DbSet<Report> Reports { get; set; }
+        public DbSet<Reserve> Reserves { get; set; }
+        public DbSet<WorkingDesk> WorkingDesks { get; set; }
+        public DbSet<BookingType> BookingTypes { get; set; }
     }
 }
