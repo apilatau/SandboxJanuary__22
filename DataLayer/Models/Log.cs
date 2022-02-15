@@ -6,7 +6,7 @@ namespace DataLayer.Models
     {
         public int Id { get; set; }
         public DateTime Logtime { get; set; }
-        public int EmployeesId { get; set; }
+        public int UserId { get; set; }
         public string EventType { get; set; }
         public string ObjectName { get; set; }
         public string ObjectType { get; set; }
