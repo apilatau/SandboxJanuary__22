@@ -9,6 +9,8 @@ namespace DataLayer.Models
         public string DeskType { get; set; }
         public bool Booked { get; set; }
         public int MapId { get; set; }
+        //public Map Map { get; set; }
+
         public bool HasPC { get; set; }
         public bool HasMonitor { get; set; }
         public bool HasKeyboard { get; set; }
