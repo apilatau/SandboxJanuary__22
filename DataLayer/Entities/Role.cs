@@ -1,9 +1,7 @@
-namespace PresentationLayer.Entities
+namespace DataLayer.Entities;
+
+public class Role : BaseEntity
 {
-    public class Role : BaseEntity
-    {
-        public string RoleName { get; set; }
-        public ICollection<User> Users { get; set; }
-    }
-    
+    public string RoleName { get; set; }
+    public ICollection<User> Users { get; set; }
 }
