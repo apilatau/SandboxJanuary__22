@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Repository
 {
-    internal class Repository : DataLayer.Repository.IRepository.IRepository
+    public class Repository : DataLayer.Repository.IRepository.IRepository
     {
         // Implementation
     }

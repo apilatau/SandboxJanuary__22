@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Repository.IRepository
 {
-    internal interface IRepository
+    public interface IRepository
     {
         // No methods yet
     }
