@@ -18,17 +18,13 @@ namespace DataLayer.Models
 
         [Required]
         public int RoleId { get; set; }
-        //public Role Role { get; set; }
+        public Role Role { get; set; }
 
         public DateTime EmploymentStart { get; set; }
         public DateTime EmploymentEnd { get; set; }
 
         public bool IsWorking { get; set; }
         public bool HaveVacation { get; set; }
-
-        [Required]
-        public int CountryId { get; set; }
-        //public Country Country { get; set; }
 
         [Required]
         public int CityId { get; set; }
