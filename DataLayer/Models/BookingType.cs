@@ -2,9 +2,8 @@
 
 namespace DataLayer.Models
 {
-    public class BookingType
+    public class BookingType : BaseEntity
     {
-        public int Id { get; set; }
         public string BookType { get; set; }
 
         public ICollection<Reserve> Reserves { get; set; }

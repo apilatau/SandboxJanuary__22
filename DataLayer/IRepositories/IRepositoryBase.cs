@@ -1,10 +1,12 @@
-﻿namespace DataLayer.IRepositories
+﻿using DataLayer.Models;
+
+namespace DataLayer.IRepositories
 {
     /// <summary>
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IRepositoryBase<T> : IReadRepositoryBase<T> where T : class
+    public interface IRepositoryBase<T> : IReadRepositoryBase<T> where T : BaseEntity
     {
         /// <summary>
         /// 
@@ -12,7 +14,7 @@
         /// <param name="entity"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<T> Create(T entity, CancellationToken cancellationToken = default);
+        Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 
@@ -20,7 +22,7 @@
         /// <param name="entity"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task Update(T entity, CancellationToken cancellationToken = default);
+        Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 
@@ -28,13 +30,13 @@
         /// <param name="entity"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task Delete(T entity, CancellationToken cancellationToken = default);
+        Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<int> SaveChanges(CancellationToken cancellationToken = default);
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

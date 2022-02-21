@@ -2,10 +2,8 @@
 
 namespace DataLayer.Models
 {
-    public class User
+    public class User : BaseEntity
     {
-        public int Id { get; set; }
-
         public int TelegramId { get; set; }
 
         [Required]

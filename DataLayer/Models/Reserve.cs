@@ -2,9 +2,8 @@
 
 namespace DataLayer.Models
 {
-    public class Reserve
+    public class Reserve : BaseEntity
     {
-        public int Id { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int UserId { get; set; }

@@ -2,9 +2,8 @@
 
 namespace DataLayer.Models
 {
-    public class Report
+    public class Report : BaseEntity
     {
-        public int Id { get; set; }
         public int EmployeeId { get; set; }
         public int CountryId { get; set; }
         public int CityId { get; set; }

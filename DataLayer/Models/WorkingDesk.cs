@@ -2,9 +2,8 @@
 
 namespace DataLayer.Models
 {
-    public class WorkingDesk
+    public class WorkingDesk : BaseEntity
     {
-        public int Id { get; set; }
         public int Number { get; set; }
         public string DeskType { get; set; }
         public bool Booked { get; set; }
