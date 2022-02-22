@@ -2,9 +2,8 @@
 
 namespace DataLayer.Models
 {
-    public class Map
+    public class Map : BaseEntity
     {
-        public int Id { get; set; }
         public int Floor { get; set; }
         public bool HasKitchen { get; set; }
         public bool HasConfRoom { get; set; }
