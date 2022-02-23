@@ -17,5 +17,6 @@ namespace DataLayer.Data
         public DbSet<Reserve> Reserves { get; set; }
         public DbSet<WorkingDesk> WorkingDesks { get; set; }
         public DbSet<BookingType> BookingTypes { get; set; }
+        public DbSet<Log> Logs { get; set; }
     }
 }
