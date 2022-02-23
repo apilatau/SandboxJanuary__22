@@ -8,6 +8,7 @@ namespace DataLayer.Models
         public bool HasKitchen { get; set; }
         public bool HasConfRoom { get; set; }
         public int OfficeId { get; set; }
+        //public Office Office { get; set; }
 
         public ICollection<WorkingDesk> WorkingDesks { get; set; }
     }
