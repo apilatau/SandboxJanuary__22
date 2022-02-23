@@ -1,9 +1,11 @@
-namespace PresentationLayer.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DataLayer.Models
 {
     public class Log : BaseEntity
     {
-        public DateTime Logtime { get; set; }
-        public int EmployeesId { get; set; }
+        public DateTime LogTime { get; set; }
+        public int UserId { get; set; }
         public string EventType { get; set; }
         public string ObjectName { get; set; }
         public string ObjectType { get; set; }

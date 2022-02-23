@@ -10,8 +10,7 @@ namespace DataLayer.Models
         //public User User { get; set; }
 
         public int BookingTypeId { get; set; }
-        //public BookingType BookingType { get; set; }
-
+        public BookingType BookingType { get; set; }
         public int Frequency { get; set; }
     }
 }
