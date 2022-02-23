@@ -10,8 +10,6 @@ namespace PresentationLayer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-   
-    
     public class OfficeController : Controller
     {
         [HttpPost]
