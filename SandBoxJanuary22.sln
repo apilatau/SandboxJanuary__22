@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayer", "DataLayer\Data
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelegramBotAPI", "TelegramBotAPI\TelegramBotAPI.csproj", "{70955CCE-E5E0-4991-93EA-5A1D3D581035}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{35EC8EDF-C71C-489E-9585-375F972F2293}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{35EC8EDF-C71C-489E-9585-375F972F2293}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
