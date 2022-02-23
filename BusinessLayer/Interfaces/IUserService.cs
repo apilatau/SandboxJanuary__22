@@ -9,5 +9,6 @@ namespace BusinessLayer.Interfaces
         Task<List<User>> ListAsync();
         Task<User> GetByIdAsync(int id);
         Task UpdateAsync(User user);
+        Task<AuthenticateResponse> AuthenticateAsync(AuthenticateRequest model);
     }
 }
