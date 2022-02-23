@@ -7,12 +7,12 @@ namespace TelegramBotAPI.Controllers
     [ApiController]
     public class BookingController : ControllerBase
     {
-        [HttpGet(Name = "GetBookingTypes")]
+        [HttpGet(Name = "BookingTypes")]
         public string[] BookingTypes()
         {
             return new string[0];
         }
-        [HttpGet(Name = "GetServiceTypes")]
+        [HttpGet(Name = "ServiceTypes")]
         public string[] ServiceTypes()
         {
             return new string[0];
