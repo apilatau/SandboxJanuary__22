@@ -1,5 +1,7 @@
+using BusinessLayer;
 using Telegram.Bot;
 using TelegramBotAPI;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddBusinessServices();
+
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
