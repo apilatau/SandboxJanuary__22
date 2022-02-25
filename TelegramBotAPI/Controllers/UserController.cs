@@ -24,24 +24,12 @@ namespace TelegramBotAPI.Controllers
             return await _userService.AddAsync(user);
         }
 
-        //[HttpGet]
-        //public async Task<User> GetByIdUser(int id)
-        //{
-        //    return await _userService.GetByIdAsync(id);
-        //}
-
         [HttpGet]
         [Authorize]
         public async Task<List<User>> GetUsers()
         {
             return await _userService.ListAsync();
         }
-
-        //[HttpDelete]
-        //public async Task DeleteAsync(User user)
-        //{
-        //    await _userService.DeleteAsync(user);
-        //}
 
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate(AuthenticateRequest model)
