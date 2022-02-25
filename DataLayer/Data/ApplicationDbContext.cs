@@ -11,7 +11,9 @@ namespace DataLayer.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<Map> Maps { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Reserve> Reserves { get; set; }

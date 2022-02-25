@@ -15,7 +15,7 @@ namespace BusinessLayer.Authorization
             var allowAnonymous = context.ActionDescriptor.EndpointMetadata.OfType<AllowAnonymousAttribute>().Any();
             if (allowAnonymous)
                 return;
-            // authorization
+
             var employee = context.HttpContext.Items["User"] as User;
             if (employee == null)
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
