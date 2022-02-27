@@ -6,6 +6,6 @@ namespace DataLayer.Models
     {
         public string BookType { get; set; }
 
-        public ICollection<Reserve> Reserves { get; set; }
+        //public ICollection<Reserve> Reserves { get; set; }
     }
 }

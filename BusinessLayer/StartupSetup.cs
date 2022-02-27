@@ -15,6 +15,7 @@ namespace BusinessLayer
             Services.AddScoped<IUserService, UserService>();
             Services.AddScoped<IMapService, MapService>();
             Services.AddScoped<IReserveService, ReserveService>();
+            Services.AddScoped<IBookingTypeService, BookingTypeService>();
             Services.AddScoped<IWorkingDeskService, WorkingDeskService>();
         }
     }

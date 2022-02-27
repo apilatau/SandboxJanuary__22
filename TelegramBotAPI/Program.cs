@@ -22,7 +22,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddTransient<IReserveRepository, ReserveRepository>();
+builder.Services.AddTransient<IBookingTypeRepository, BookingTypeRepository>();
+builder.Services.AddBusinessServices();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("EnableCORS", builder =>
