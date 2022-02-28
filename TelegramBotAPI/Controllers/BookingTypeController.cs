@@ -30,6 +30,13 @@ namespace TelegramBotAPI.Controllers
         public async Task<List<BookingType>> GetBookingTypeList()
         {
             return await bookingTypeService.ListAsync();
-        }   
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditBookingType(BookingTypeService bookingTypeService, BookingType bookingType)
+        {
+            bookingTypeService.UpdateAsync(bookingType);
+            return Ok();
+        }
     }
 }
