@@ -6,7 +6,7 @@ namespace TelegramBotAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WorkplaceController : Controller
+    public class WorkingDeskController : Controller
     {
         
         [HttpPost]
