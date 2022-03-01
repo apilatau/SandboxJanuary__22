@@ -6,6 +6,7 @@ namespace DataLayer.Models
     {
         public DateTime LogTime { get; set; }
         public int UserId { get; set; }
+      //  public virtual User User { get; set; }
         public string EventType { get; set; }
         public string ObjectName { get; set; }
         public string ObjectType { get; set; }

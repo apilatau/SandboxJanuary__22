@@ -35,6 +35,5 @@ namespace BusinessLayer
         }
 
         public async Task UpdateAsync(Reserve reserve) => await reserveRepository.UpdateAsync(reserve);
-        
     }
 }

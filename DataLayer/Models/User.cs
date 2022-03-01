@@ -17,7 +17,7 @@ namespace DataLayer.Models
 
         [Required]
         public int RoleId { get; set; }
-        public Role Role { get; set; }
+        public virtual Role Role { get; set; }
 
         public DateTime EmploymentStart { get; set; }
         public DateTime EmploymentEnd { get; set; }
@@ -27,7 +27,10 @@ namespace DataLayer.Models
 
         [Required]
         public int CityId { get; set; }
-        public City City { get; set; }
+        public virtual City City { get; set; }
+
+      //  public ICollection<Reserve> Reserves { get; set; }
+      //  public virtual ICollection<Log> Logs { get; set; }
 
     }
 }

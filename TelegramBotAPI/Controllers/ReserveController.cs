@@ -13,16 +13,31 @@ namespace TelegramBotAPI.Controllers
         private readonly IReserveService reserveService;
         private readonly ILogger<ReserveController> logger;
 
-        public ReserveController(IReserveService reserveService, ILogger<ReserveController> logger)
+        public ReserveController(
+            IReserveService reserveService,
+            ILogger<ReserveController> logger)
         {
             this.reserveService = reserveService;
             this.logger = logger;
+
         }
 
 
-        [HttpPost]
+        [HttpPost("AddBooking")]
         public async Task<Reserve> AddReserve(Reserve reserve)
         {
+            return await reserveService.AddAsync(reserve);
+        }
+
+        [HttpPost("AddBookingInAdvance")]
+        public async Task<Reserve> AddReserveInAdvance(Reserve reserve)
+        { 
+            if (reserve.EndDate > DateTime.Now.AddMonths(3) || reserve.EndDate < DateTime.Now)
+            {
+                throw new ArgumentException("The workspace had already been reserved or " +
+                    "you can only reserve workspace as late as 3 months before your employment date.");
+            }
+
             return await reserveService.AddAsync(reserve);
         }
 

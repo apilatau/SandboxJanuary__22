@@ -65,7 +65,7 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
             new TelegramBotClient("5120059284:AAEW1xdREZG09BSV5akzkZaifa_nEUJOr48", httpClient));
@@ -122,6 +122,7 @@ builder.Services.AddSwaggerGen(opt =>
         }
     });
 });
+builder.Services.AddSwaggerGenNewtonsoftSupport();
 
 var app = builder.Build();
 
@@ -147,6 +148,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSession();
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    var token = "5173236015:AAHiLg_3pCAiMk46B6t7k7HigKnMBmQqR3Y";
+
+    endpoints.MapControllerRoute(name: "tgwebhook",
+        pattern: $"bot/{token}",
+        new { controller = "Webhook", action = "Post" });
+
+    endpoints.MapControllers();
+});
 
 app.Run();
