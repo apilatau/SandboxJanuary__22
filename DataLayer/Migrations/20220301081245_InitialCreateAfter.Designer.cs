@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220301072225_InitialCreateAfter")]
+    [Migration("20220301081245_InitialCreateAfter")]
     partial class InitialCreateAfter
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,45 +39,6 @@ namespace DataLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BookingTypes");
-                });
-
-            modelBuilder.Entity("DataLayer.Models.City", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CountryId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
-
-                    b.ToTable("City");
-                });
-
-            modelBuilder.Entity("DataLayer.Models.Country", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Country");
                 });
 
             modelBuilder.Entity("DataLayer.Models.DeskType", b =>
@@ -284,8 +245,6 @@ namespace DataLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CityId");
-
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
@@ -338,17 +297,6 @@ namespace DataLayer.Migrations
                     b.ToTable("WorkingDesks");
                 });
 
-            modelBuilder.Entity("DataLayer.Models.City", b =>
-                {
-                    b.HasOne("DataLayer.Models.Country", "Country")
-                        .WithMany("Cities")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Country");
-                });
-
             modelBuilder.Entity("DataLayer.Models.Report", b =>
                 {
                     b.HasOne("DataLayer.Models.Reserve", "Reserve")
@@ -371,7 +319,7 @@ namespace DataLayer.Migrations
             modelBuilder.Entity("DataLayer.Models.Reserve", b =>
                 {
                     b.HasOne("DataLayer.Models.BookingType", "BookingType")
-                        .WithMany("Reserves")
+                        .WithMany()
                         .HasForeignKey("BookingTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -400,19 +348,11 @@ namespace DataLayer.Migrations
 
             modelBuilder.Entity("DataLayer.Models.User", b =>
                 {
-                    b.HasOne("DataLayer.Models.City", "City")
-                        .WithMany("Users")
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("DataLayer.Models.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("City");
 
                     b.Navigation("Role");
                 });
@@ -434,21 +374,6 @@ namespace DataLayer.Migrations
                     b.Navigation("DeskType");
 
                     b.Navigation("Map");
-                });
-
-            modelBuilder.Entity("DataLayer.Models.BookingType", b =>
-                {
-                    b.Navigation("Reserves");
-                });
-
-            modelBuilder.Entity("DataLayer.Models.City", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("DataLayer.Models.Country", b =>
-                {
-                    b.Navigation("Cities");
                 });
 
             modelBuilder.Entity("DataLayer.Models.DeskType", b =>

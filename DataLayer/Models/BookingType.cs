@@ -5,6 +5,6 @@
         public string BookType { get; set; }
 
         //[IgnoreDataMember]
-       // public ICollection<Reserve> Reserves { get; set; }
+       //public ICollection<Reserve> Reserves { get; set; }
     }
 }

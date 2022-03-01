@@ -24,21 +24,15 @@ namespace TelegramBotAPI.Controllers
 
 
         [HttpPost("AddBooking")]
-        public async Task<Reserve> AddReserve(Reserve reserve)
+        public async Task<Reserve> AddReserve([FromBody]Reserve reserve)
         {
             return await reserveService.AddAsync(reserve);
         }
 
         [HttpPost("AddBookingInAdvance")]
         public async Task<Reserve> AddReserveInAdvance(Reserve reserve)
-        { 
-            if (reserve.EndDate > DateTime.Now.AddMonths(3) || reserve.EndDate < DateTime.Now)
-            {
-                throw new ArgumentException("The workspace had already been reserved or " +
-                    "you can only reserve workspace as late as 3 months before your employment date.");
-            }
-
-            return await reserveService.AddAsync(reserve);
+        {
+            return await reserveService.AddInAdvanceAsync(reserve);
         }
 
         [HttpGet]

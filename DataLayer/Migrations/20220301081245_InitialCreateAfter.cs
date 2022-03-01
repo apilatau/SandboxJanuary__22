@@ -24,19 +24,6 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Country",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Country", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DeskType",
                 columns: table => new
                 {
@@ -110,26 +97,6 @@ namespace DataLayer.Migrations
                         name: "FK_Reserves_BookingTypes_BookingTypeId",
                         column: x => x.BookingTypeId,
                         principalTable: "BookingTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "City",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    CountryId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_City", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_City_Country_CountryId",
-                        column: x => x.CountryId,
-                        principalTable: "Country",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -215,12 +182,6 @@ namespace DataLayer.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_City_CityId",
-                        column: x => x.CityId,
-                        principalTable: "City",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Users_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
@@ -258,11 +219,6 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_City_CountryId",
-                table: "City",
-                column: "CountryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Reports_ReserveId",
                 table: "Reports",
                 column: "ReserveId");
@@ -286,11 +242,6 @@ namespace DataLayer.Migrations
                 name: "IX_RolePermissions_RoleId",
                 table: "RolePermissions",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_CityId",
-                table: "Users",
-                column: "CityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_RoleId",
@@ -338,13 +289,7 @@ namespace DataLayer.Migrations
                 name: "BookingTypes");
 
             migrationBuilder.DropTable(
-                name: "City");
-
-            migrationBuilder.DropTable(
                 name: "Roles");
-
-            migrationBuilder.DropTable(
-                name: "Country");
         }
     }
 }
