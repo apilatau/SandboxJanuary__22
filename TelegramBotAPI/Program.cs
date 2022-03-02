@@ -68,7 +68,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
-            new TelegramBotClient("5120059284:AAEW1xdREZG09BSV5akzkZaifa_nEUJOr48", httpClient));
+            new TelegramBotClient("5147496499:AAFHGgCkgS9-gx_uJhyz-nvPYGVgrN2jQ7o", httpClient));
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);

@@ -27,9 +27,9 @@ namespace TelegramBotAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<List<Reserve>> GetAll()
+        public async Task<Reserve> GetById(int id)
         {
-            return await reserveService.ListAsync();
+            return await reserveService.GetByIdAsync(id);
         }
 
     }
