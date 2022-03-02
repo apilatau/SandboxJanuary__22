@@ -68,64 +68,66 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 builder.Services.AddSwaggerGen();
 
 #region telegram webhook
+builder.Services.AddHostedService<ConfigureWebHook>();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
             new TelegramBotClient("5120059284:AAEW1xdREZG09BSV5akzkZaifa_nEUJOr48", httpClient));
+
 builder.Services.AddScoped<HandleUpdateService>();
 #endregion
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
-//builder.Services.AddSwaggerGen(opt =>
-//{
-//    opt.SwaggerDoc("v1", new OpenApiInfo 
-//    { 
-//        Title = "TelegramBotAPI", 
-//        Version = "v1",
-//        Description = "An API to perform Telegram Bot operations",
-//        TermsOfService = new Uri("https://core.telegram.org/api/terms"),
-//        Contact = new OpenApiContact
-//        {
-//            Name = "Example Contact",
-//            Url = new Uri("https://example.com/contact")
-//        },
-//        License = new OpenApiLicense
-//        {
-//            Name = "Example License",
-//            Url = new Uri("https://example.com/license")
-//        }
-//    });
+builder.Services.AddSwaggerGen(opt =>
+{
+    opt.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "TelegramBotAPI",
+        Version = "v1",
+        Description = "An API to perform Telegram Bot operations",
+        TermsOfService = new Uri("https://core.telegram.org/api/terms"),
+        Contact = new OpenApiContact
+        {
+            Name = "Example Contact",
+            Url = new Uri("https://example.com/contact")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Example License",
+            Url = new Uri("https://example.com/license")
+        }
+    });
 
-//    // using System.Reflection;
-//    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-//    opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    // using System.Reflection;
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
-//    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-//    {
-//        In = ParameterLocation.Header,
-//        Description = "Please enter token",
-//        Name = "Authorization",
-//        Type = SecuritySchemeType.Http,
-//        BearerFormat = "JWT",
-//        Scheme = "bearer"
-//    });
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
 
-//    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-//    {
-//        {
-//            new OpenApiSecurityScheme
-//            {
-//                Reference = new OpenApiReference
-//                {
-//                    Type=ReferenceType.SecurityScheme,
-//                    Id="Bearer"
-//                }
-//            },
-//            new string[]{}
-//        }
-//    });
-//});
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -151,15 +153,15 @@ app.UseEndpoints(endpoints =>
 {
    
     endpoints.MapControllerRoute(name: "tgwebhook",
-                                 pattern: $"bot/{5120059284:AAEW1xdREZG09BSV5akzkZaifa_nEUJOr48}",
-                                 new { controller = "Webhook", action = "Post" });
+                                 pattern: $"bot/webhook",
+                                 new { controller = "webhook", action = "Post" });
     endpoints.MapControllers();
 });
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
-//app.UseSession();
-//app.MapControllers();
+app.UseSession();
+app.MapControllers();
 
 app.Run();

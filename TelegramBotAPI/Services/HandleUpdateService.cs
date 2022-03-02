@@ -2,6 +2,7 @@
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramBotAPI.Services
 {
@@ -35,6 +36,16 @@ namespace TelegramBotAPI.Services
             }
         }
 
+        private async Task BotOnMessageRecieved(Message message)
+        {
+            _logger.LogInformation($"Message recieved: {message.Type}");
+
+            await _botClient.SendTextMessageAsync(
+                chatId: message.Chat.Id,
+                text: "Bot has revieved message!"
+                );
+        }
+
         private Task HandlerErrorAsync(Exception ex)
         {
             var ErrorMessage = ex switch
@@ -57,20 +68,11 @@ namespace TelegramBotAPI.Services
         private async Task BotOnCallBackQueryRecieved(CallbackQuery callbackQuery)
         {
             await _botClient.SendTextMessageAsync(
-                chatId: callbackQuery.Message.Chat.Id,
+                chatId:  callbackQuery.Message.Chat.Id,
                 text: $"{callbackQuery.Data}"
                 );
         }
 
-        private async Task BotOnMessageRecieved(Message message)
-        {
-            _logger.LogInformation($"Recieve message type: {message.Type}");
-
-            await _botClient.SendTextMessageAsync(
-                chatId: 1678231744,
-                text: "Botga xabar keldi"
-                );
-           
-        }
+        
     }
 }

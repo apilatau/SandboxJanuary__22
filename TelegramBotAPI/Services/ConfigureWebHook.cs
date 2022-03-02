@@ -49,6 +49,8 @@ namespace TelegramBotAPI.Services
             await botClient.SendTextMessageAsync(
                 chatId: 1678231744,
                 text: "Bot is sleeping");
+            
+            await botClient.DeleteWebhookAsync(cancellationToken: cancellationToken);
         }
     }
 }
