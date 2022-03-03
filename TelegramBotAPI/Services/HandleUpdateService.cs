@@ -19,12 +19,14 @@ namespace TelegramBotAPI.Services
 
         public async Task EchoAsync(Update update)
         {
-            var handler = update.Type switch
-            {
-                UpdateType.Message => BotOnMessageRecieved(update.Message!),
-                UpdateType.CallbackQuery => BotOnCallBackQueryRecieved(update.CallbackQuery!),
-                _ => UnknownUpdateTypeHandler(update)
-            };
+            
+                var handler = update.Type switch
+                {
+                    UpdateType.Message => BotOnMessageRecieved(update.Message!),
+                    _ => UnknownUpdateTypeHandler(update)
+                };
+            
+            
 
             try
             {

@@ -151,15 +151,16 @@ app.UseRouting();
 
 app.UseEndpoints(endpoints =>
 {
-   
+    var token = "5120059284:AAEW1xdREZG09BSV5akzkZaifa_nEUJOr48";
+
     endpoints.MapControllerRoute(name: "tgwebhook",
-                                 pattern: $"bot/webhook",
-                                 new { controller = "webhook", action = "Post" });
+                                 pattern: $"bot/{token}",
+                                 new { controller = "Webhook", action = "Post" });
     endpoints.MapControllers();
 });
 
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.UseSession();
 app.MapControllers();
