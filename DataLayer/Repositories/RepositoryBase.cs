@@ -1,101 +1,48 @@
 ﻿using DataLayer.Data;
+using DataLayer.Dto.MapDto;
 using DataLayer.IRepositories;
 using DataLayer.Models;
+using DataLayer.Responses;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace DataLayer.Repositories
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class RepositoryBase<T> : IRepositoryBase<T> where T : BaseEntity
+    public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext dbContext;
+        internal DbSet<T> dbSet;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dbContext"></param>
         public RepositoryBase(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;
+            this.dbContext = dbContext;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public virtual async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
+        public async Task<T> AddMap(T entity, CancellationToken cancellationToken = default)
         {
-            _dbContext.Set<T>().Add(entity);
-
-            await SaveChangesAsync(cancellationToken);
-
+            dbSet.Add(entity);
             return entity;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public virtual async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
+        public async void Delete(T entity, CancellationToken cancellationToken = default)
         {
-            _dbContext.Set<T>().Remove(entity);
-
-            await SaveChangesAsync(cancellationToken);
+            dbSet.Remove(entity);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TId"></typeparam>
-        /// <param name="id"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public virtual async Task<T?> GetByIdAsync<TId>(TId id, CancellationToken cancellationToken = default) where TId : notnull
-        {
-            return await _dbContext.Set<T>().FindAsync(new object[] { id }, cancellationToken: cancellationToken);
-        }
+        //public async Task<List<T>> GetAll(Expression<Func<T, bool>> filter = null, CancellationToken cancellationToken = default)
+        //{
+        //    IQueryable<T> query = dbSet;
+        //    if (filter != null)
+        //    {
+        //        query = query.Where(filter);
+        //    }
+        //    return await query.ToListAsync(cancellationToken: cancellationToken);
+        //}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public virtual async Task<List<T>> ListAsync(CancellationToken cancellationToken = default)
+        // DOING
+        public Task<T> GetById(int id, CancellationToken cancellationToken = default)
         {
-            return await _dbContext.Set<T>().ToListAsync(cancellationToken);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public virtual async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            return await _dbContext.SaveChangesAsync(cancellationToken);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public virtual async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
-        {
-            _dbContext.Set<T>().Update(entity);
-
-            await SaveChangesAsync(cancellationToken);
+            throw new NotImplementedException();
         }
     }
 }

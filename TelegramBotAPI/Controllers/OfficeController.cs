@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DataLayer.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace PresentationLayer.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetById()
         {
             return Ok();
         }
@@ -37,5 +38,9 @@ namespace PresentationLayer.Controllers
         {
             return Ok();
         }
+       // [HttpGet]
+        //public List<Map> GetAllOffices()
+        //{
+        //}
     }
 }

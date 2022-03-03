@@ -1,4 +1,6 @@
 using BusinessLayer;
+using DataLayer.Data;
+using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 using TelegramBotAPI;
 
@@ -11,7 +13,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddBusinessServices();
-
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+    ));
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>

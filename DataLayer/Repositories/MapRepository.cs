@@ -6,8 +6,14 @@ namespace DataLayer.Repositories
 {
     public class MapRepository : RepositoryBase<Map>, IMapRepository
     {
-        public MapRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private ApplicationDbContext _db;
+        public MapRepository(ApplicationDbContext db) : base(db)
         {
+            _db = db;
+        }
+        void IMapRepository.Update(Map map)
+        {
+            _db.Maps.Update(map);
         }
     }
 }

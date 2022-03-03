@@ -1,42 +1,12 @@
 ﻿using DataLayer.Models;
+using System.Linq.Expressions;
 
 namespace DataLayer.IRepositories
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IRepositoryBase<T> : IReadRepositoryBase<T> where T : BaseEntity
+    public interface IRepositoryBase<T> where T : class
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+        Task<T> AddMap(T entity, CancellationToken cancellationToken = default);
+        void Delete(T entity, CancellationToken cancellationToken = default);
+        Task<T> GetById(int id, CancellationToken cancellationToken = default);
     }
 }
