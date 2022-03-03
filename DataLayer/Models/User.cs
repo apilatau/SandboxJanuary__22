@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace DataLayer.Models
 {
@@ -15,7 +16,7 @@ namespace DataLayer.Models
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
-        [Required]
+        
         public int RoleId { get; set; }
         public Role Role { get; set; }
 
@@ -27,7 +28,10 @@ namespace DataLayer.Models
 
         [Required]
         public int CityId { get; set; }
-        public City City { get; set; }
+        //public virtual City City { get; set; }
+
+      //  public ICollection<Reserve> Reserves { get; set; }
+      //  public virtual ICollection<Log> Logs { get; set; }
 
     }
 }

@@ -5,9 +5,9 @@ namespace DataLayer.Models
     public class Role : BaseEntity
     {
 
-        [Required]
+       // [Required]
         public string RoleName { get; set; }
 
-        public ICollection<User> Users { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }

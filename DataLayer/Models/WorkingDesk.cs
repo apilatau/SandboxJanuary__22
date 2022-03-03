@@ -6,7 +6,7 @@ namespace DataLayer.Models
     {
         public int Number { get; set; }
         public int DeskTypeId { get; set; }
-        public DeskType DeskType { get; set; }
+        public virtual DeskType DeskType { get; set; }
         public bool Booked { get; set; }
         public int MapId { get; set; }
         public Map Map { get; set; }
