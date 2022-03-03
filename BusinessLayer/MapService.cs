@@ -27,7 +27,7 @@ namespace BusinessLayer
         {
             var mapResponse = new MapResponse<MapResponseDto>();
             var office = await _dbContext.Offices.FirstOrDefaultAsync(u => u.Id == mapDto.OfficeId);
-            if (office == null) throw new Exception("Office not found");
+            if (office == null) throw new Exception("Office not found"); // needs to be modified
             Map newMap = mapDto.Adapt<Map>();
             await MapRepository.AddAsync(newMap);
             var mapResponseDto = newMap.Adapt<MapResponseDto>(); // Mapster
