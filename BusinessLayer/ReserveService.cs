@@ -44,6 +44,31 @@ namespace BusinessLayer
             return await reserveRepository.ListAsync();
         }
 
-        public async Task UpdateAsync(Reserve reserve) => await reserveRepository.UpdateAsync(reserve);
+        public Task UpdateAsync(Reserve reserve)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task EditBookingForUserAsync(int booking_id, int userId, Reserve reserve)
+        {
+
+            var booking = await reserveRepository.GetByIdAsync(booking_id);
+
+            if (booking.UserId != userId)
+            {
+                booking.StartDate = reserve.StartDate;
+                booking.EndDate = reserve.EndDate;
+                booking.BookingType = reserve.BookingType;
+                booking.Frequency = reserve.Frequency;
+
+                await reserveRepository.SaveChangesAsync();
+            } else
+            {
+                throw new ArgumentException("You have not authorized to edit this booking");
+            }
+
+        }
+
+
     }
 }
