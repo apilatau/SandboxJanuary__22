@@ -35,7 +35,13 @@ namespace TelegramBotAPI.Controllers
             return await reserveService.AddInAdvanceAsync(reserve);
         }
 
-        [HttpGet]
+        [HttpGet("booking/{id}")]
+        public async Task<Reserve> GetById(int id)
+        {
+            return await reserveService.GetByIdAsync(id);
+        }
+
+        [HttpGet("GetAll")]
         public async Task<List<Reserve>> GetAll()
         {
             return await reserveService.ListAsync();
