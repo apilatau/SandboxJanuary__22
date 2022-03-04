@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Repositories
 {
-    public class CityRepository : RepositoryBase<City>, ICityRepository
+    public class OfficeRepository : RepositoryBase<Office>, IOfficeRepository
     {
-        public CityRepository(ApplicationDbContext dbContext) :base(dbContext)
+        public OfficeRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
-            
+
         }
     }
 }

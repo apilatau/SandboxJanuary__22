@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Exceptions;
 using DataLayer;
+using DataLayer.Data;
 using DataLayer.Dtos.ReportDto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,28 +11,20 @@ namespace TelegramBotAPI.Controllers
     [ApiController]
     public class ReportsController : ControllerBase
     {
-        ReportTimeline reportTimeline; 
+        ReportTimeline reportTimeline;
+        ApplicationDbContext _dbContext;
 
-        public ReportsController(ReportTimeline _reportTimeline)
+        public ReportsController(ReportTimeline _reportTimeline, ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
             reportTimeline = _reportTimeline;
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> ReportByOffice(int officeId, bool full,DateTime startDate, DateTime finishDate)
+        public async Task<IActionResult> ReportByOffice(RequestOfficeReportDto requestOfficeReportDto)
         {
-            if (reportTimeline.Weekly)
-            {
-
-            }
-            else if (reportTimeline.Monthly)
-            {
-
-            }
-            else throw new ReportCustomException();
-
-            return Ok();
+            var office =  _dbContext.Offices
         }
         
         [HttpGet]

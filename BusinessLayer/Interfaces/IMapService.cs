@@ -7,9 +7,9 @@ namespace BusinessLayer.Interfaces
     {
         Task<List<MapResponseDto>> GetAllMaps(CancellationToken cancellationToken = default);
 
-        Task<MapResponse<CreateMapDto>> DeleteMap(int id, CancellationToken cancellationToken = default);
+        Task<ResponseBase<CreateMapDto>> DeleteMap(int id, CancellationToken cancellationToken = default);
 
-        Task<MapResponse<MapResponseDto>> AddMap(CreateMapDto mapDto);
-        Task<MapResponse<CreateMapDto>> GetMapById(int id, CancellationToken cancellationToken = default);
+        Task<ResponseBase<MapResponseDto>> AddMap(CreateMapDto mapDto);
+        Task<ResponseBase<CreateMapDto>> GetMapById(int id, CancellationToken cancellationToken = default);
     }
 }

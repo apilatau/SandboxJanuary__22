@@ -13,7 +13,6 @@ namespace BusinessLayer
     public class MapService : IMapService
     {
         private readonly MapRepository MapRepository;
-        private readonly OfficeRepository OfficeRepository;
         private readonly ApplicationDbContext _dbContext;
         internal DbSet<Map> dbSet;
 
@@ -23,9 +22,9 @@ namespace BusinessLayer
             dbSet = _dbContext.Set<Map>();
         }
 
-        public async Task<MapResponse<MapResponseDto>> AddMap(CreateMapDto mapDto)
+        public async Task<ResponseBase<MapResponseDto>> AddMap(CreateMapDto mapDto)
         {
-            var mapResponse = new MapResponse<MapResponseDto>();
+            var mapResponse = new ResponseBase<MapResponseDto>();
             var office = await _dbContext.Offices.FirstOrDefaultAsync(u => u.Id == mapDto.OfficeId);
             if (office == null) throw new OfficeCustomException("Office not found");
 
@@ -36,7 +35,7 @@ namespace BusinessLayer
 
             return mapResponse;
         }
-        public Task<MapResponse<CreateMapDto>> DeleteMap(int id, CancellationToken cancellationToken = default)
+        public Task<ResponseBase<CreateMapDto>> DeleteMap(int id, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
@@ -49,7 +48,7 @@ namespace BusinessLayer
             return maps;
         }
 
-        public Task<MapResponse<CreateMapDto>> GetMapById(int id, CancellationToken cancellationToken = default)
+        public Task<ResponseBase<CreateMapDto>> GetMapById(int id, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

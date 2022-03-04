@@ -9,8 +9,8 @@ namespace DataLayer.Dtos.ReportDto
     public class RequestOfficeReportDto
     {
         public int OfficeId { get; set; }
-        public ReportTimeline timeline { get; set; }
-        public DetailsEnum detailsEnum { get; set; }
+        public ReportTimeline Timeline { get; set; }
+        public DetailsEnum DetailsEnum { get; set; }
     }
 
 }
