@@ -3,6 +3,7 @@ using BusinessLayer.Interfaces;
 using DataLayer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TelegramBotAPI.Controllers
 {
@@ -18,10 +19,22 @@ namespace TelegramBotAPI.Controllers
             _workingDeskService = workingDeskService;
         }
 
+
+        [HttpPost]
+        [Authorize]
+        public async Task<WorkingDesk> AddWorkingDesk(WorkingDesk workingDesk)
+        {
+            return await _workingDeskService.AddAsync(workingDesk); 
+        }
+        [HttpPut]
+        [Authorize]
+        public async Task UpdateWorkingDesk(WorkingDesk workingDesk) => await _workingDeskService.UpdateAsync(workingDesk);
+        
+
         [HttpGet]
         public async Task<ActionResult<List<WorkingDesk>>> GetWorkingDesksAsync()
         {
-            return await _workingDeskService.GetWorkingDesksAsync();
+            return await _workingDeskService.ListAsync();
         }
         
 
