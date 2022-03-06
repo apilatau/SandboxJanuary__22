@@ -17,9 +17,7 @@ namespace DataLayer.Models
         public int BookingTypeId { get; set; }
         [JsonIgnore]
         public BookingType? BookingType { get; set; }
-
         public bool IsReccuring { get; set; }
-
         public int Frequency { get; set; }
     }
 }

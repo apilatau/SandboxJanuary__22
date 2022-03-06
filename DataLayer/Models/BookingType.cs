@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
 
 namespace DataLayer.Models
 {
@@ -6,6 +6,7 @@ namespace DataLayer.Models
     {
         public string BookType { get; set; }
 
-        public ICollection<Reserve> Reserves { get; set; }
+        [JsonIgnore]
+        public ICollection<Reserve>? Reserves { get; set; }
     }
 }

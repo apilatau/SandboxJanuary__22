@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataLayer.Models
 {
@@ -8,6 +9,7 @@ namespace DataLayer.Models
         [Required]
         public string RoleName { get; set; }
 
-        public ICollection<User> Users { get; set; }
+        [JsonIgnore]
+        public ICollection<User>? Users { get; set; }
     }
 }
