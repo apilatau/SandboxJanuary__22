@@ -1,11 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataLayer.Models
 {
     public class Report : BaseEntity
     {
         public int UserId { get; set; }
-        public User User { get; set; }
+        [JsonIgnore]
+        public User? User { get; set; }
+
         public int CountryId { get; set; }
         
         public int CityId { get; set; }
@@ -13,6 +16,7 @@ namespace DataLayer.Models
         public int OfficeId { get; set; }
         
         public int ReserveId { get; set; }
-        public Reserve Reserve { get; set; }
+        [JsonIgnore]
+        public Reserve? Reserve { get; set; }
     }
 }
