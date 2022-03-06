@@ -12,10 +12,12 @@ namespace BusinessLayer
     {
         private AppSettings _appSettings;
         private readonly IUserRepository _userRepository;
+        private readonly IRoleRepository _roleRepository;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IRoleRepository roleRepository)
         {
             _userRepository = userRepository;
+            _roleRepository = roleRepository;
             _appSettings = new AppSettings();
         }
 
@@ -28,23 +30,25 @@ namespace BusinessLayer
         {
             var data = await _userRepository.ListAsync();
             var user = data.Where(x => x.TelegramId == model.TelegramId).FirstOrDefault();
+            var roles = await _roleRepository.ListAsync();
+            var role = roles.Where(x => x.Id == user.RoleId).FirstOrDefault();
 
             // return null if user not found
             if (user == null) return null;
 
             // authentication successful so generate jwt token
-            var token = generateJwtToken(user);
+            var token = generateJwtToken(user, role);
 
-            return new AuthenticateResponse(user, token);
+            return new AuthenticateResponse(user, role, token);
         }
 
-        private string generateJwtToken(User user)
+        private string generateJwtToken(User user, Role role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes("401b09eab3c013d4ca54922bb802bec8fd5318192b0a75f201d8b3727429090fb337591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1");
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
+                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Role, role.RoleName) }),
                 Issuer = "JWTAuthenticationIssuer",
                 Audience = "JWTAuthenticationAudience",
                 Expires = DateTime.UtcNow.AddMinutes(7),

@@ -9,13 +9,13 @@
         public string Role { get; set; }
 
 
-        public AuthenticateResponse(User user, string token)
+        public AuthenticateResponse(User user, Role role, string token)
         {
             Email = user.Email;
             Token = token;
             FirstName = user.FirstName;
             LastName = user.LastName;
-            Role = user.Role != null ? user.Role.RoleName : "";
+            Role = role.RoleName;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace TelegramBotAPI.Controllers
     {
         private readonly IWorkingDeskService _workingDeskService;
         private readonly ILogger<WorkingDeskController> _logger;
-        public WorkingDeskController(WorkingDeskService workingDeskService, ILogger<WorkingDeskController> logger)
+        public WorkingDeskController(IWorkingDeskService workingDeskService, ILogger<WorkingDeskController> logger)
         {
             _logger = logger;
             _workingDeskService = workingDeskService;
@@ -21,15 +21,20 @@ namespace TelegramBotAPI.Controllers
 
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Map Editor")]
         public async Task<WorkingDesk> AddWorkingDesk(WorkingDesk workingDesk)
         {
             return await _workingDeskService.AddAsync(workingDesk); 
         }
+
         [HttpPut]
-        [Authorize]
+        [Authorize(Roles = "Map Editor")]
         public async Task UpdateWorkingDesk(WorkingDesk workingDesk) => await _workingDeskService.UpdateAsync(workingDesk);
-        
+
+        [HttpDelete]
+        [Authorize(Roles = "Map Editor")]
+        public async Task DeleteWorkingDesk(WorkingDesk workingDesk) => await _workingDeskService.DeleteAsync(workingDesk);
+
 
         [HttpGet]
         public async Task<ActionResult<List<WorkingDesk>>> GetWorkingDesksAsync()
