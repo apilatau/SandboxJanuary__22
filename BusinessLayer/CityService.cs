@@ -1,0 +1,62 @@
+﻿using BusinessLayer.Exceptions;
+using BusinessLayer.Interfaces;
+using DataLayer.Data;
+using DataLayer.Dtos.CityDto;
+using DataLayer.Models;
+using DataLayer.Repositories;
+using DataLayer.Responses;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLayer
+{
+    public class CityService : ICityService
+    {
+        private readonly CityRepository CityRepository;
+        private readonly ApplicationDbContext _dbContext;
+        internal DbSet<City> dbSet;
+
+        public CityService(ApplicationDbContext dbContext)
+        {
+            _dbContext = dbContext;
+            dbSet = _dbContext.Set<City>();
+        }
+
+        public async Task<ResponseBase<CityResponseDto>> AddCity(CreateCityDto cityDto)
+        {
+            var cityResponse = new ResponseBase<CityResponseDto>();
+            var country = await _dbContext.Cities.FirstOrDefaultAsync(u => u.Id == cityDto.CountryId);
+            if (country == null) throw new CountryCustomException("Office not found");
+
+            City newCity = cityDto.Adapt<City>();
+            await CityRepository.AddAsync(newCity);
+            var cityResponseDto = newCity.Adapt<CityResponseDto>(); // Mapster
+            cityResponse.Data = cityResponseDto;
+
+            return cityResponse;
+        }
+        public Task<ResponseBase<CreateCityDto>> DeleteCity(int id, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<CityResponseDto>> GetAllCities(int id, CancellationToken cancellationToken = default)
+        {
+            List<CityResponseDto> cities = await dbSet
+                .Select(m => m.Adapt<CityResponseDto>())
+                .Where(m => m.CountryId == id)
+                .ToListAsync(cancellationToken);
+            return cities;
+        }
+
+        public Task<ResponseBase<CreateCityDto>> GetCityById(int id, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
