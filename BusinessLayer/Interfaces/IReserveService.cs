@@ -1,5 +1,4 @@
-﻿namespace BusinessLayer.Interfaces
-using DataLayer.Dtos.ReserveDto;
+﻿using DataLayer.Dtos.ReserveDto;
 using DataLayer.Responses;
 
 namespace BusinessLayer.Interfaces

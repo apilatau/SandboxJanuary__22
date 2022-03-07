@@ -1,5 +1,4 @@
-﻿namespace BusinessLayer.Interfaces
-using DataLayer.Dto.MapDto;
+﻿using DataLayer.Dto.MapDto;
 using DataLayer.Dtos.WorkingDeskDto;
 using DataLayer.Responses;
 

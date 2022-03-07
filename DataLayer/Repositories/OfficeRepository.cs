@@ -13,7 +13,6 @@ namespace DataLayer.Repositories
     {
         public OfficeRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
-
         }
     }
 }

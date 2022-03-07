@@ -35,10 +35,8 @@ namespace TelegramBotAPI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> ReportByOffice(int officeId, bool full, DateTime startDate, DateTime finishDate)
         public async Task<GetReportDto> ReportByOffice(RequestOfficeReportDto requestOfficeReportDto, DateTime startDate, DateTime finishDate, CancellationToken cancellationToken = default)
         {
-            return Ok();
             var office = await _officeService.GetOfficeById(requestOfficeReportDto.OfficeId);
             // var office = await _dbContext.Offices.FindAsync(new object[] { requestOfficeReportDto.OfficeId }, cancellationToken);
             if (office == null) throw new OfficeCustomException("Office not found");
@@ -81,10 +79,8 @@ namespace TelegramBotAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ReportByCity(int cityId, bool full, DateTime startDate, DateTime finishDate)
         public async Task<GetReportDto> ReportByCity(RequestCityReportDto requestCityReportDto, DateTime startDate, DateTime finishDate, CancellationToken cancellationToken = default)
         {
-            return Ok();
             var city = await _cityService.GetCityById(requestCityReportDto.CityId);
             if (city == null) throw new CityCustomException("City no found");
 
@@ -133,7 +129,6 @@ namespace TelegramBotAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ReportByFloor(int officeId, int floorId, bool full, DateTime startDate, DateTime finishDate)
         public async Task<GetReportDto> ReportByFloor(RequestMapReportDto requestMapReportDto, DateTime startDate, DateTime finishDate, CancellationToken cancellationToken = default)
         {
             var floor = await _mapService.GetMapById(requestMapReportDto.MapId);
@@ -179,7 +174,6 @@ namespace TelegramBotAPI.Controllers
         [HttpGet]
         public async Task<GetReportDto> ReportByEmployee(RequestUserReportDto requestUserReportDto, DateTime startDate, DateTime finishDate, CancellationToken cancellationToken = default)
         {
-            return Ok();
             var employee = await _userService.GetByIdAsync(requestUserReportDto.UserId);
             if (employee == null) throw new CustomEmployeeException("User not Found");
 
@@ -206,10 +200,8 @@ namespace TelegramBotAPI.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> ReportAllOffices(bool full, DateTime startDate, DateTime finishDate)
         public async Task<GetReportDto> ReportAllOffices(RequestAllOfficesReportDto requestAllOfficesReportDto, DateTime startDate, DateTime finishDate, CancellationToken cancellationToken = default)
         {
-            return Ok();
             var allOffices = await _officeService.GetAllOffices();
             if (allOffices == null) throw new OfficeCustomException("No data found");
 
