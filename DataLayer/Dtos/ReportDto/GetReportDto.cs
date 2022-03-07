@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Dtos.ReportDto
 {
-    public class GetOfficeReportDto
+    public class GetReportDto
     {
         public float PercentageOfBookedWorkplaces { get; set; }
         public int NumberOfBookedWorkplaces { get; set; }

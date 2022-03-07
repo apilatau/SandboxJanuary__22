@@ -9,7 +9,6 @@ namespace DataLayer.Models
         public bool HasConfRoom { get; set; }
         public int OfficeId { get; set; }
         
-
         public ICollection<WorkingDesk> WorkingDesks { get; set; }
     }
 }

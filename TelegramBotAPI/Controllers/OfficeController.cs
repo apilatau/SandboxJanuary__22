@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DataLayer.Data;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,13 @@ namespace PresentationLayer.Controllers
     [ApiController]
     public class OfficeController : Controller
     {
+        private readonly ILogger<OfficeController> _logger;
+
+        public OfficeController(ApplicationDbContext dbContext, ILogger<OfficeController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddOffice()
         {

@@ -2,6 +2,7 @@
 using BusinessLayer.Interfaces;
 using DataLayer.Data;
 using DataLayer.Dto.MapDto;
+using DataLayer.Dtos.OfficeDto;
 using DataLayer.Models;
 using DataLayer.Repositories;
 using DataLayer.Responses;
@@ -40,10 +41,11 @@ namespace BusinessLayer
             throw new NotImplementedException();
         }
 
-        public async Task<List<MapResponseDto>> GetAllMaps(CancellationToken cancellationToken = default)
+        public async Task<List<MapResponseDto>> GetAllMaps(int id, CancellationToken cancellationToken = default)
         {
             List<MapResponseDto> maps = await dbSet
                 .Select(m => m.Adapt<MapResponseDto>())
+                .Where(m => m.OfficeId == id)
                 .ToListAsync(cancellationToken);
             return maps;
         }
@@ -51,6 +53,20 @@ namespace BusinessLayer
         public Task<ResponseBase<CreateMapDto>> GetMapById(int id, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<MapResponseDto>> GetMapsForEachOffice(List<OfficeResponseDto> offices, CancellationToken cancellationToken = default)
+        {
+            var mapResponseDtosList = new List<MapResponseDto>();
+            foreach (var office in offices)
+            {
+                var maps = await dbSet
+                    .Select(m => m.Adapt<MapResponseDto>())
+                    .Where(m => m.OfficeId == office.OfficeId)
+                    .ToListAsync(cancellationToken);
+                mapResponseDtosList.AddRange(maps);
+            };
+            return mapResponseDtosList;
         }
     }
 }

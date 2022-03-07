@@ -1,4 +1,5 @@
-﻿using DataLayer.Models;
+﻿using BusinessLayer.Interfaces;
+using DataLayer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,14 @@ namespace TelegramBotAPI.Controllers
     [ApiController]
     public class WorkingDeskController : Controller
     {
+        private readonly ILogger<WorkingDeskController> _logger;
+        private readonly IWorkingDeskService _workingService;
+
+        public WorkingDeskController(IWorkingDeskService workingDeskService, ILogger<WorkingDeskController> logger)
+        {
+            _logger = logger;
+            _workingService = workingDeskService;
+        }
         
         [HttpPost]
         public async Task<ActionResult<WorkingDesk>> UploadWorkplaceFile()

@@ -8,6 +8,13 @@ namespace TelegramBotAPI.Controllers
     [ApiController]
     public class MapController : Controller
     {
+        private readonly ILogger<MapController> _logger;
+
+        public MapController(ILogger<MapController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Map>>  GetMap(int id)
         {

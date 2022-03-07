@@ -19,6 +19,6 @@ namespace DataLayer.Data
         public DbSet<WorkingDesk> WorkingDesks { get; set; }
         public DbSet<BookingType> BookingTypes { get; set; }
         public DbSet<Office> Offices { get; set; }  
-
+        public DbSet<City> Cities { get; set; }
     }
 }
