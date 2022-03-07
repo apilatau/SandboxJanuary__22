@@ -1,5 +1,4 @@
-﻿using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace DataLayer.Models
 {
@@ -9,8 +8,10 @@ namespace DataLayer.Models
         public WorkingDesk WorkingDesk { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+
         public int UserId { get; set; }
-       // public User User { get; set; } 
+        [JsonIgnore]
+        public User? User { get; set; } 
 
         public int BookingTypeId { get; set; }
         public BookingType BookingType { get; set; }
