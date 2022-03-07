@@ -1,8 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace DataLayer.Models
+namespace DataLayer.Dtos.ReserveDto
 {
-    public class Reserve : BaseEntity
+    public class ReserveResponseDto
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

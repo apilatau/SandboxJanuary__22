@@ -19,7 +19,7 @@ namespace BusinessLayer
 {
     public class OfficeService : IOfficeService
     {
-        private readonly OfficeRepository OfficeRepository;
+        private readonly OfficeRepository _officeRepository;
         private readonly ApplicationDbContext _dbContext;
         internal DbSet<Office> dbSet;
 
@@ -36,7 +36,7 @@ namespace BusinessLayer
             if (city == null) throw new OfficeCustomException("City not found");
 
             Office newOffice = officeDto.Adapt<Office>();
-            await OfficeRepository.AddAsync(newOffice);
+            await _officeRepository.AddAsync(newOffice);
             var officeResponseDto = newOffice.Adapt<OfficeResponseDto>(); // Mapster
             officeResponse.Data = officeResponseDto;
 
@@ -47,13 +47,24 @@ namespace BusinessLayer
             throw new NotImplementedException();
         }
 
-        public async Task<List<OfficeResponseDto>> GetAllOffices(int id, CancellationToken cancellationToken = default)
+        public async Task<List<OfficeResponseDto>> GetAllOffices(int Cityid=default, CancellationToken cancellationToken = default)
         {
-            List<OfficeResponseDto> offices = await dbSet
+            if(Cityid != null)
+            {
+                List<OfficeResponseDto> offices = await dbSet
                 .Select(m => m.Adapt<OfficeResponseDto>())
-                .Where(m => m.CityId == id)
+                .Where(m => m.CityId == Cityid)
                 .ToListAsync(cancellationToken);
-            return offices;
+                return offices;
+            }
+            else
+            {
+                List<OfficeResponseDto> offices = await dbSet
+                .Select(m => m.Adapt<OfficeResponseDto>())
+                .ToListAsync(cancellationToken);
+                return offices;
+            }
+            
         }
 
         public Task<ResponseBase<OfficeResponseDto>> GetOfficeById(int id, CancellationToken cancellationToken = default)
