@@ -1,14 +1,11 @@
 using BusinessLayer;
-using BusinessLayer.Interfaces;
 using DataLayer;
 using DataLayer.Data;
-using DataLayer.IRepositories;
-using DataLayer.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Reflection;
 using System.Text;
 using Telegram.Bot;
@@ -16,12 +13,10 @@ using TelegramBotAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(opts => opts.SerializerSettings.Converters.Add(new StringEnumConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddCors();
 builder.Services.AddDataServices();
 builder.Services.AddBusinessServices();
 builder.Services.AddCors(options =>
@@ -70,9 +65,6 @@ builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
             new TelegramBotClient("5120059284:AAEW1xdREZG09BSV5akzkZaifa_nEUJOr48", httpClient));
 builder.Services.AddScoped<HandleUpdateService>();
-
-builder.Services.AddControllers().AddNewtonsoftJson(options =>
-    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
 builder.Services.AddSwaggerGen(opt =>
 {
@@ -159,5 +151,6 @@ app.UseEndpoints(endpoints =>
 
     endpoints.MapControllers();
 });
+
 
 app.Run();

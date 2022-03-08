@@ -1,48 +1,59 @@
 ﻿using BusinessLayer.Interfaces;
-using DataLayer.IRepositories;
+using DataLayer.Data;
+using DataLayer.Dtos.ReserveDto;
 using DataLayer.Models;
 using DataLayer.Repositories;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLayer
 {
     public class ReserveService : IReserveService
     {
-        private AppSettings _appSettings;
-        private readonly IReserveRepository reserveRepository;
+        private readonly ReserveRepository ReserveRepository;
+        private readonly ApplicationDbContext _dbContext;
+        internal DbSet<Reserve> dbSet;
 
-        public ReserveService(IReserveRepository reserveRepository)
+        public ReserveService(ApplicationDbContext dbContext)
         {
-            this.reserveRepository = reserveRepository;
-            _appSettings = new AppSettings();
+            _dbContext = dbContext;
+            dbSet = _dbContext.Set<Reserve>();
         }
 
-        public async Task<Reserve> AddAsync(Reserve reserve)
+        public async Task<List<ReserveResponseDto>> GetAllReserves(int id, CancellationToken cancellationToken = default)
         {
-            return await reserveRepository.AddAsync(reserve);
+            List<ReserveResponseDto> reserves = await dbSet
+                .Select(m => m.Adapt<ReserveResponseDto>())
+                .Where(m => m.UserId == id)
+                .ToListAsync(cancellationToken);
+            return reserves;
         }
+    }
+}
 
-        public async Task<Reserve> AddInAdvanceAsync(Reserve reserve)
-        {
-            if (reserve.EndDate > DateTime.Now.AddMonths(3) || reserve.EndDate < DateTime.Now)
-            {
-                throw new ArgumentException("The workspace had already been reserved or " +
-                    "you can only reserve workspace as late as 3 months before your employment date.");
-            }
-            return await reserveRepository.AddAsync(reserve);
-        }
+//using BusinessLayer.Interfaces;
+//using DataLayer.IRepositories;
+//using DataLayer.Models;
+//using DataLayer.Repositories;
 
-        public async Task DeleteAsync(Reserve reserve) =>  await reserveRepository.DeleteAsync(reserve);
-        
+//namespace BusinessLayer
+//{
+//    public class ReserveService : IReserveService
+//    {
+//        private AppSettings _appSettings;
+//        private readonly IReserveRepository reserveRepository;
 
-        public async Task<Reserve> GetByIdAsync(int id)
-        {
-            return await reserveRepository.GetByIdAsync(id);
-        }
+//        public ReserveService(IReserveRepository reserveRepository)
+//        {
+//            this.reserveRepository = reserveRepository;
+//            _appSettings = new AppSettings();
+//        }
 
-        public async Task<List<Reserve>> ListAsync()
-        {
-            return await reserveRepository.ListAsync();
-        }
+//        public async Task<Reserve> AddAsync(Reserve reserve)
+//        {
+//            return await reserveRepository.AddAsync(reserve);
+//        }
+
 
         public Task UpdateAsync(Reserve reserve)
         {
@@ -75,3 +86,31 @@ namespace BusinessLayer
 
     }
 }
+
+//        public async Task<Reserve> AddInAdvanceAsync(Reserve reserve)
+//        {
+//            if (reserve.EndDate > DateTime.Now.AddMonths(3) || reserve.EndDate < DateTime.Now)
+//            {
+//                throw new ArgumentException("The workspace had already been reserved or " +
+//                    "you can only reserve workspace as late as 3 months before your employment date.");
+//            }
+//            return await reserveRepository.AddAsync(reserve);
+//        }
+
+//        public async Task DeleteAsync(Reserve reserve) =>  await reserveRepository.DeleteAsync(reserve);
+
+
+//        public async Task<Reserve> GetByIdAsync(int id)
+//        {
+//            return await reserveRepository.GetByIdAsync(id);
+//        }
+
+//        public async Task<List<Reserve>> ListAsync()
+//        {
+//            return await reserveRepository.ListAsync();
+//        }
+
+//        public async Task UpdateAsync(Reserve reserve) => await reserveRepository.UpdateAsync(reserve);
+//    }
+//}
+

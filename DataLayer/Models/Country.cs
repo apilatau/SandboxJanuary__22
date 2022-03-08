@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
 
 namespace DataLayer.Models
 {
     public class Country : BaseEntity
     {
         public string Name { get; set; }
-        public virtual ICollection<City> Cities { get; set;}
+
+        [JsonIgnore]
+        public ICollection<City>? Cities { get; set;}
     }
 }

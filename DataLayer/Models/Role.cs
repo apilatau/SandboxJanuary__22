@@ -1,13 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataLayer.Models
 {
     public class Role : BaseEntity
     {
 
-       // [Required]
+        [Required]
         public string RoleName { get; set; }
 
-        public virtual ICollection<User> Users { get; set; }
+        [JsonIgnore]
+        public ICollection<User>? Users { get; set; }
     }
 }

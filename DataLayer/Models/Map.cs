@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
 
 namespace DataLayer.Models
 {
@@ -8,8 +8,8 @@ namespace DataLayer.Models
         public bool HasKitchen { get; set; }
         public bool HasConfRoom { get; set; }
         public int OfficeId { get; set; }
-        
 
-        public ICollection<WorkingDesk> WorkingDesks { get; set; }
+        [JsonIgnore]
+        public ICollection<WorkingDesk>? WorkingDesks { get; set; }
     }
 }

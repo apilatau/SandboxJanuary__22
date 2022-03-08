@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Repositories
 {
-    internal class CityRepository : RepositoryBase<City>, ICityRepository
+    public class CityRepository : RepositoryBase<City>, ICityRepository
     {
         public CityRepository(ApplicationDbContext dbContext) :base(dbContext)
         {
