@@ -54,6 +54,39 @@ namespace BusinessLayer
 //            return await reserveRepository.AddAsync(reserve);
 //        }
 
+
+        public Task UpdateAsync(Reserve reserve)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task EditBookingForUserAsync(int booking_id, int userId, Reserve reserve)
+        {
+
+            var booking = await reserveRepository.GetByIdAsync(booking_id);
+            var isAvailable = reserveRepository.IsAvailable(booking.StartDate, booking.EndDate);
+
+            if (!isAvailable) throw new ArgumentException("These dates are not availbale");
+
+            if (booking.UserId != userId)
+            {
+                booking.StartDate = reserve.StartDate;
+                booking.EndDate = reserve.EndDate;
+                booking.BookingType = reserve.BookingType;
+                booking.Frequency = reserve.Frequency;
+
+                await reserveRepository.SaveChangesAsync();
+            } else
+            {
+                throw new ArgumentException("You have not authorized to edit this booking");
+            }
+
+        }
+
+
+    }
+}
+
 //        public async Task<Reserve> AddInAdvanceAsync(Reserve reserve)
 //        {
 //            if (reserve.EndDate > DateTime.Now.AddMonths(3) || reserve.EndDate < DateTime.Now)
@@ -80,3 +113,4 @@ namespace BusinessLayer
 //        public async Task UpdateAsync(Reserve reserve) => await reserveRepository.UpdateAsync(reserve);
 //    }
 //}
+
