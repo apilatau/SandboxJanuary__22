@@ -15,8 +15,6 @@ namespace BusinessLayer
         private readonly IReserveRepository reserveRepository;
         private readonly ReserveRepository ReserveRepository;
         private readonly ApplicationDbContext _dbContext;
-        private AppSettings _appSettings;
-        private readonly IReserveRepository reserveRepository;
 
         internal DbSet<Reserve> dbSet;
 
@@ -85,12 +83,12 @@ namespace BusinessLayer
             return await reserveRepository.GetByIdAsync(id);
         }
 
-//        public async Task<List<Reserve>> ListAsync()
-//        {
-//            return await reserveRepository.ListAsync();
-//        }
+        public async Task<List<Reserve>> ListAsync()
+        {
+            return await reserveRepository.ListAsync();
+        }
 
-//        public async Task UpdateAsync(Reserve reserve) => await reserveRepository.UpdateAsync(reserve);
-//    }
-//}
+        public async Task UpdateAsync(Reserve reserve) => await reserveRepository.UpdateAsync(reserve);
+    }
+}
 
