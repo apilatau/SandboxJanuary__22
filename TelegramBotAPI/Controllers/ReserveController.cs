@@ -22,6 +22,17 @@ namespace TelegramBotAPI.Controllers
 
         }
 
+        [HttpDelete("CancelReserve")]
+        public async void CancelReserve(Reserve reserve)
+        {
+            await reserveService.DeleteAsync(reserve);
+        }
+
+        [HttpDelete("TimeChecker")]
+        public async void TimeChecker(Reserve reserve)
+        {
+            await reserveService.TimeChecker(reserve);
+        }
 
         //[HttpPost("AddBooking")]
         //public async Task<Reserve> AddReserve([FromBody]Reserve reserve)

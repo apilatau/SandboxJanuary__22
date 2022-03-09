@@ -4,6 +4,7 @@ using DataLayer.Dtos.ReserveDto;
 using DataLayer.IRepositories;
 using DataLayer.Models;
 using DataLayer.Repositories;
+using Hangfire;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,6 +78,16 @@ namespace BusinessLayer
 
         public async Task DeleteAsync(Reserve reserve) =>  await reserveRepository.DeleteAsync(reserve);
 
+        public async void CancelReserve(Reserve reserve)
+        {
+            await DeleteAsync(reserve);
+        }
+        public Task TimeChecker(Reserve reserve)
+        {
+            int timeInHours = 12;
+            var bookId = BackgroundJob.Schedule(() => CancelReserve(reserve), TimeSpan.FromHours(timeInHours));
+            return Task.CompletedTask;
+        }
 
         public async Task<Reserve> GetByIdAsync(int id)
         {
@@ -89,6 +100,7 @@ namespace BusinessLayer
         }
 
         public async Task UpdateAsync(Reserve reserve) => await reserveRepository.UpdateAsync(reserve);
+
     }
 }
 
