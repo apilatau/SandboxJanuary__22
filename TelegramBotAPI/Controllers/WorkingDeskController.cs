@@ -9,34 +9,34 @@ namespace TelegramBotAPI.Controllers
     public class WorkingDeskController : Controller
     {
         
-        [HttpPost]
-        public async Task<ActionResult<WorkingDesk>> UploadWorkplaceFile()
-        {
-            return CreatedAtAction(null,null);
-        }
+        //[HttpPost]
+        //public async Task<ActionResult<WorkingDesk>> UploadWorkplaceFile()
+        //{
+        //    return CreatedAtAction(null,null);
+        //}
 
-        [HttpPost]
-        public async Task<ActionResult<WorkingDesk>> CreateWorkplace(WorkingDesk workingDesk)
-        {
-            return CreatedAtAction(null, new { Id = workingDesk.Id });
-        }
+        //[HttpPost]
+        //public async Task<ActionResult<WorkingDesk>> CreateWorkplace(WorkingDesk workingDesk)
+        //{
+        //    return CreatedAtAction(null, new { Id = workingDesk.Id });
+        //}
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<WorkingDesk>>> GetWorkplaces()
-        {
-            return Ok();
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<WorkingDesk>>> GetWorkplaces()
+        //{
+        //    return Ok();
+        //}
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<WorkingDesk>> GetWorkingplace(int id)
-        {
-            return Ok();
-        }
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<WorkingDesk>> GetWorkingplace(int id)
+        //{
+        //    return Ok();
+        //}
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateWorkingplace(int id, WorkingDesk workingDesk)
-        {
-            return Ok();
-        }
+        //[HttpPut("{id}")]
+        //public async Task<ActionResult> UpdateWorkingplace(int id, WorkingDesk workingDesk)
+        //{
+        //    return Ok();
+        //}
     }
 }
