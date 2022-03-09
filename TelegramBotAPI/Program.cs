@@ -1,28 +1,24 @@
 using BusinessLayer;
-using BusinessLayer.Interfaces;
+using DataLayer;
 using DataLayer.Data;
-using DataLayer.IRepositories;
-using DataLayer.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Reflection;
 using System.Text;
 using Telegram.Bot;
-
+using TelegramBotAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(opts => opts.SerializerSettings.Converters.Add(new StringEnumConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddCors();
-builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddDataServices();
+builder.Services.AddBusinessServices();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("EnableCORS", builder =>
@@ -63,13 +59,12 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+builder.Services.AddHostedService<ConfigureWebHook>();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
-            new TelegramBotClient("5120059284:AAEW1xdREZG09BSV5akzkZaifa_nEUJOr48", httpClient));
-
-builder.Services.AddControllers().AddNewtonsoftJson(options =>
-    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+            new TelegramBotClient("5173236015:AAHiLg_3pCAiMk46B6t7k7HigKnMBmQqR3Y", httpClient));
+builder.Services.AddScoped<HandleUpdateService>();
 
 builder.Services.AddSwaggerGen(opt =>
 {
@@ -120,6 +115,7 @@ builder.Services.AddSwaggerGen(opt =>
         }
     });
 });
+builder.Services.AddSwaggerGenNewtonsoftSupport();
 
 var app = builder.Build();
 
@@ -145,6 +141,16 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSession();
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    var token = "5173236015:AAHiLg_3pCAiMk46B6t7k7HigKnMBmQqR3Y";
+
+    endpoints.MapControllerRoute(name: "tgwebhook",
+        pattern: $"bot/{token}",
+        new { controller = "Webhook", action = "Post" });
+
+    endpoints.MapControllers();
+});
+
 
 app.Run();

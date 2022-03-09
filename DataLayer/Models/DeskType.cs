@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 
 namespace DataLayer.Models
 {
@@ -10,6 +6,7 @@ namespace DataLayer.Models
     {
         public string DeskTypeName { get; set; }
 
-        public ICollection<WorkingDesk> WorkingDesks { get; set; }
+        [JsonIgnore]
+        public ICollection<WorkingDesk>? WorkingDesks { get; set; }
     }
 }

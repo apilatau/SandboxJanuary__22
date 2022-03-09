@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer
 {
-    public static class StartupSetup
+    public static class StartupSetupBL
     {
         public static void AddBusinessServices(this IServiceCollection Services)
         {
             Services.AddScoped<IUserService, UserService>();
             Services.AddScoped<IMapService, MapService>();
             Services.AddScoped<IReserveService, ReserveService>();
+            Services.AddScoped<IBookingTypeService, BookingTypeService>();
             Services.AddScoped<IWorkingDeskService, WorkingDeskService>();
         }
     }

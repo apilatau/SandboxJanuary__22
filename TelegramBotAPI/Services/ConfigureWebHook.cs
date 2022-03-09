@@ -29,7 +29,7 @@ namespace TelegramBotAPI.Services
             _logger.LogInformation("Setting webhook");
 
             await botClient.SendTextMessageAsync(
-                chatId: 1678231744,
+                chatId: 1066009128,
                 text: "Bot has started working!");
 
             await botClient.SetWebhookAsync(
@@ -47,7 +47,7 @@ namespace TelegramBotAPI.Services
             _logger.LogInformation("WebHook removing");
 
             await botClient.SendTextMessageAsync(
-                chatId: 1678231744,
+                chatId: 1066009128,
                 text: "Bot is sleeping");
         }
     }

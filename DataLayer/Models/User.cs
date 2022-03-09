@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace DataLayer.Models
 {
@@ -15,9 +16,10 @@ namespace DataLayer.Models
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
-        [Required]
+        
         public int RoleId { get; set; }
-        public Role Role { get; set; }
+        [JsonIgnore]
+        public Role? Role { get; set; }
 
         public DateTime EmploymentStart { get; set; }
         public DateTime EmploymentEnd { get; set; }
@@ -25,9 +27,15 @@ namespace DataLayer.Models
         public bool IsWorking { get; set; }
         public bool HaveVacation { get; set; }
 
-        [Required]
+        // [Required]
         public int CityId { get; set; }
-        public City City { get; set; }
+        [JsonIgnore]
+        public City? City { get; set; }
+
+        [JsonIgnore]
+        public ICollection<Reserve>? Reserves { get; set; }
+        [JsonIgnore]
+        public ICollection<Log>? Logs { get; set; }
 
     }
 }
