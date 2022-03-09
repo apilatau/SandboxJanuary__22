@@ -39,6 +39,45 @@ namespace DataLayer.Migrations
                     b.ToTable("BookingTypes");
                 });
 
+            modelBuilder.Entity("DataLayer.Models.City", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CountryId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
+
+                    b.ToTable("Cities");
+                });
+
+            modelBuilder.Entity("DataLayer.Models.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Country");
+                });
+
             modelBuilder.Entity("DataLayer.Models.DeskType", b =>
                 {
                     b.Property<int>("Id")
@@ -54,6 +93,46 @@ namespace DataLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DeskType");
+                });
+
+            modelBuilder.Entity("DataLayer.Models.Log", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EventDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("LogTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ObjectName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ObjectType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SqlCommand")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Log");
                 });
 
             modelBuilder.Entity("DataLayer.Models.Map", b =>
@@ -79,6 +158,36 @@ namespace DataLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Maps");
+                });
+
+            modelBuilder.Entity("DataLayer.Models.Office", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CountryId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Parking")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Offices");
                 });
 
             modelBuilder.Entity("DataLayer.Models.Permission", b =>
@@ -147,15 +256,25 @@ namespace DataLayer.Migrations
                     b.Property<int>("Frequency")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsReccuring")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("WorkingDeskId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BookingTypeId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WorkingDeskId");
 
                     b.ToTable("Reserves");
                 });
@@ -243,6 +362,8 @@ namespace DataLayer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CityId");
+
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
@@ -295,6 +416,28 @@ namespace DataLayer.Migrations
                     b.ToTable("WorkingDesks");
                 });
 
+            modelBuilder.Entity("DataLayer.Models.City", b =>
+                {
+                    b.HasOne("DataLayer.Models.Country", "Country")
+                        .WithMany("Cities")
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Country");
+                });
+
+            modelBuilder.Entity("DataLayer.Models.Log", b =>
+                {
+                    b.HasOne("DataLayer.Models.User", "User")
+                        .WithMany("Logs")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DataLayer.Models.Report", b =>
                 {
                     b.HasOne("DataLayer.Models.Reserve", "Reserve")
@@ -317,12 +460,28 @@ namespace DataLayer.Migrations
             modelBuilder.Entity("DataLayer.Models.Reserve", b =>
                 {
                     b.HasOne("DataLayer.Models.BookingType", "BookingType")
-                        .WithMany()
+                        .WithMany("Reserves")
                         .HasForeignKey("BookingTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DataLayer.Models.User", "User")
+                        .WithMany("Reserves")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataLayer.Models.WorkingDesk", "WorkingDesk")
+                        .WithMany()
+                        .HasForeignKey("WorkingDeskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("BookingType");
+
+                    b.Navigation("User");
+
+                    b.Navigation("WorkingDesk");
                 });
 
             modelBuilder.Entity("DataLayer.Models.RolePermission", b =>
@@ -346,11 +505,19 @@ namespace DataLayer.Migrations
 
             modelBuilder.Entity("DataLayer.Models.User", b =>
                 {
+                    b.HasOne("DataLayer.Models.City", "City")
+                        .WithMany("Users")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("DataLayer.Models.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("City");
 
                     b.Navigation("Role");
                 });
@@ -374,6 +541,21 @@ namespace DataLayer.Migrations
                     b.Navigation("Map");
                 });
 
+            modelBuilder.Entity("DataLayer.Models.BookingType", b =>
+                {
+                    b.Navigation("Reserves");
+                });
+
+            modelBuilder.Entity("DataLayer.Models.City", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("DataLayer.Models.Country", b =>
+                {
+                    b.Navigation("Cities");
+                });
+
             modelBuilder.Entity("DataLayer.Models.DeskType", b =>
                 {
                     b.Navigation("WorkingDesks");
@@ -387,6 +569,13 @@ namespace DataLayer.Migrations
             modelBuilder.Entity("DataLayer.Models.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("DataLayer.Models.User", b =>
+                {
+                    b.Navigation("Logs");
+
+                    b.Navigation("Reserves");
                 });
 #pragma warning restore 612, 618
         }
