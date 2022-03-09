@@ -13,7 +13,7 @@ namespace TelegramBotAPI.Controllers
         private readonly IBookingTypeService bookingTypeService;
         private readonly ILogger<BookingTypeController> logger;
 
-        public BookingTypeController(IBookingTypeService bookingTypeService ,ILogger<BookingTypeController> logger)
+        public BookingTypeController(IBookingTypeService bookingTypeService, ILogger<BookingTypeController> logger)
         {
             this.bookingTypeService = bookingTypeService;
             this.logger = logger;

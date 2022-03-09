@@ -15,6 +15,9 @@ namespace BusinessLayer
         private readonly IReserveRepository reserveRepository;
         private readonly ReserveRepository ReserveRepository;
         private readonly ApplicationDbContext _dbContext;
+        private AppSettings _appSettings;
+        private readonly IReserveRepository reserveRepository;
+
         internal DbSet<Reserve> dbSet;
 
         public ReserveService(ApplicationDbContext dbContext, IReserveRepository reserveRepository)
@@ -39,6 +42,7 @@ namespace BusinessLayer
             return await reserveRepository.AddAsync(reserve);
         }
 
+
         public async Task EditBookingForUserAsync(int booking_id, int userId, Reserve reserve)
         {
 
@@ -55,7 +59,8 @@ namespace BusinessLayer
                 booking.Frequency = reserve.Frequency;
 
                 await reserveRepository.SaveChangesAsync();
-            } else
+            } 
+            else
             {
                 throw new ArgumentException("You have not authorized to edit this booking");
             }
@@ -80,13 +85,12 @@ namespace BusinessLayer
             return await reserveRepository.GetByIdAsync(id);
         }
 
-        public async Task<List<Reserve>> ListAsync()
-        {
-            return await reserveRepository.ListAsync();
-        }
+//        public async Task<List<Reserve>> ListAsync()
+//        {
+//            return await reserveRepository.ListAsync();
+//        }
 
-        public async Task UpdateAsync(Reserve reserve) => await reserveRepository.UpdateAsync(reserve);
-    
-    }
-}
+//        public async Task UpdateAsync(Reserve reserve) => await reserveRepository.UpdateAsync(reserve);
+//    }
+//}
 
