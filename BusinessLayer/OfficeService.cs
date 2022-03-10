@@ -45,11 +45,11 @@ namespace BusinessLayer
             var predicate = PredicateBuilder.New<Office>(true);
             if (name != null)
             {
-                predicate = predicate.And(i => i.Name.ToString().ToLower().Contains(name.ToString().ToLower()));
+                predicate = predicate.And(i => i.Name.ToLower().Contains(name.ToLower()));
             }
             if (address != null)
             {
-                predicate = predicate.And(i => i.Address.ToString().ToLower().Contains(address.ToString().ToLower()));
+                predicate = predicate.And(i => i.Address.ToLower().Contains(address.ToLower()));
             }
             if (cityId != null)
             {
