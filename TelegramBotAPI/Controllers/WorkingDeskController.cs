@@ -1,6 +1,9 @@
-﻿using BusinessLayer.Interfaces;
+﻿using BusinessLayer;
+using BusinessLayer.Interfaces;
 using DataLayer.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TelegramBotAPI.Controllers
 {
@@ -8,20 +11,38 @@ namespace TelegramBotAPI.Controllers
     [ApiController]
     public class WorkingDeskController : ControllerBase
     {
-        private readonly IWorkingDeskService workingDeskService;
-        private readonly ILogger<WorkingDeskController> logger;
-
-        public WorkingDeskController(IWorkingDeskService workingDeskService,
-            ILogger<WorkingDeskController> logger)
+        private readonly IWorkingDeskService _workingDeskService;
+        private readonly ILogger<WorkingDeskController> _logger;
+        public WorkingDeskController(IWorkingDeskService workingDeskService, ILogger<WorkingDeskController> logger)
         {
-            this.workingDeskService = workingDeskService;
-            this.logger = logger;
+            _logger = logger;
+            _workingDeskService = workingDeskService;
         }
 
-        [HttpGet("SearchWorkspace")]
-        public async Task<List<WorkingDesk>> SearchSpecificWorkSpace(int? mapId, int? deskTypeId, int? number)
+
+        [HttpPost]
+        [Authorize(Roles = "Map Editor")]
+        public async Task<WorkingDesk> AddWorkingDesk(WorkingDesk workingDesk)
         {
-            return await workingDeskService.SearchSpecificWorkSpace(mapId, deskTypeId, number);
+            return await _workingDeskService.AddAsync(workingDesk); 
         }
+
+        [HttpPut]
+        [Authorize(Roles = "Map Editor")]
+        public async Task UpdateWorkingDesk(WorkingDesk workingDesk) => await _workingDeskService.UpdateAsync(workingDesk);
+
+        [HttpDelete]
+        [Authorize(Roles = "Map Editor")]
+        public async Task DeleteWorkingDesk(WorkingDesk workingDesk) => await _workingDeskService.DeleteAsync(workingDesk);
+
+
+        [HttpGet]
+        public async Task<ActionResult<List<WorkingDesk>>> GetWorkingDesksAsync()
+        {
+            return await _workingDeskService.ListAsync();
+        }
+        
+
+        
     }
 }
