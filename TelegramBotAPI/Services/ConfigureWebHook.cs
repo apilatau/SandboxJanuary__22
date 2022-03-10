@@ -24,12 +24,12 @@ namespace TelegramBotAPI.Services
 
             var botClient = scope.ServiceProvider.GetRequiredService<ITelegramBotClient>();
 
-            var webhookAddress = $@"{_botConfig.HostAddress}/bot/{_botConfig.Token}";
+            var webhookAddress = @$"{_botConfig.HostAddress}/bot/{_botConfig.Token}";
 
             _logger.LogInformation("Setting webhook");
 
             await botClient.SendTextMessageAsync(
-                chatId: 1066009128,
+                chatId: 1678231744,
                 text: "Bot has started working!");
 
             await botClient.SetWebhookAsync(
@@ -47,7 +47,7 @@ namespace TelegramBotAPI.Services
             _logger.LogInformation("WebHook removing");
 
             await botClient.SendTextMessageAsync(
-                chatId: 1066009128,
+                chatId: 1678231744,
                 text: "Bot is sleeping");
         }
     }

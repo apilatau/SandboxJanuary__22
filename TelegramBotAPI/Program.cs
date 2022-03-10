@@ -63,68 +63,68 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 builder.Services.AddHostedService<ConfigureWebHook>();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
-            new TelegramBotClient("5173236015:AAHiLg_3pCAiMk46B6t7k7HigKnMBmQqR3Y", httpClient));
+            new TelegramBotClient("5238998272:AAFSYR8MFoW6rJeA4FDdLqtKbBWxR-oavvc", httpClient));
 builder.Services.AddScoped<HandleUpdateService>();
 
-builder.Services.AddSwaggerGen(opt =>
-{
-    opt.SwaggerDoc("v1", new OpenApiInfo 
-    { 
-        Title = "TelegramBotAPI", 
-        Version = "v1",
-        Description = "An API to perform Telegram Bot operations",
-        TermsOfService = new Uri("https://core.telegram.org/api/terms"),
-        Contact = new OpenApiContact
-        {
-            Name = "Example Contact",
-            Url = new Uri("https://example.com/contact")
-        },
-        License = new OpenApiLicense
-        {
-            Name = "Example License",
-            Url = new Uri("https://example.com/license")
-        }
-    });
+//builder.Services.AddSwaggerGen(opt =>
+//{
+//    opt.SwaggerDoc("v1", new OpenApiInfo 
+//    { 
+//        Title = "TelegramBotAPI", 
+//        Version = "v1",
+//        Description = "An API to perform Telegram Bot operations",
+//        TermsOfService = new Uri("https://core.telegram.org/api/terms"),
+//        Contact = new OpenApiContact
+//        {
+//            Name = "Example Contact",
+//            Url = new Uri("https://example.com/contact")
+//        },
+//        License = new OpenApiLicense
+//        {
+//            Name = "Example License",
+//            Url = new Uri("https://example.com/license")
+//        }
+//    });
 
-    // using System.Reflection;
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+//    // using System.Reflection;
+//    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+//    opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
-    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Please enter token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "bearer"
-    });
+//    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+//    {
+//        In = ParameterLocation.Header,
+//        Description = "Please enter token",
+//        Name = "Authorization",
+//        Type = SecuritySchemeType.Http,
+//        BearerFormat = "JWT",
+//        Scheme = "bearer"
+//    });
 
-    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            new string[]{}
-        }
-    });
-});
-builder.Services.AddSwaggerGenNewtonsoftSupport();
+//    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+//    {
+//        {
+//            new OpenApiSecurityScheme
+//            {
+//                Reference = new OpenApiReference
+//                {
+//                    Type=ReferenceType.SecurityScheme,
+//                    Id="Bearer"
+//                }
+//            },
+//            new string[]{}
+//        }
+//    });
+//});
+//builder.Services.AddSwaggerGenNewtonsoftSupport();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
 // global cors policy
 app.UseCors(x => x
     .AllowAnyMethod()
@@ -143,7 +143,7 @@ app.UseAuthorization();
 app.UseSession();
 app.UseEndpoints(endpoints =>
 {
-    var token = "5173236015:AAHiLg_3pCAiMk46B6t7k7HigKnMBmQqR3Y";
+    var token = "5238998272:AAFSYR8MFoW6rJeA4FDdLqtKbBWxR-oavvc";
 
     endpoints.MapControllerRoute(name: "tgwebhook",
         pattern: $"bot/{token}",
