@@ -12,9 +12,12 @@ namespace DataLayer.Repositories
             _context = dbContext;
         }
 
-        public bool IsAvailable(DateTime StartDate, DateTime EndDate)
+        public bool IsAvailable(Reserve reserve, DateTime StartDate, DateTime EndDate)
         {
-            return true;
+            var currentBooking = _context.Reserves.Where(x => x.WorkingDeskId == reserve.WorkingDeskId)
+                                                  .Select(x => x.StartDate <= StartDate && x.EndDate <= EndDate)
+                                                  .FirstOrDefault();
+            return currentBooking;
         }
     }
 }
