@@ -41,8 +41,13 @@ namespace TelegramBotAPI.Controllers
         {
             return await _workingDeskService.ListAsync();
         }
-        
 
-        
+        [HttpGet("SearchWorkspace")]
+        public async Task<List<WorkingDesk>> SearchSpecificWorkSpace(int? mapId, int? deskTypeId, int? number)
+        {
+            return await _workingDeskService.SearchSpecificWorkSpace(mapId, deskTypeId, number);
+        }
+
+
     }
 }
