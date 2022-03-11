@@ -2,6 +2,7 @@
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramBotAPI.Services
 {
@@ -20,8 +21,7 @@ namespace TelegramBotAPI.Services
         {
             var handler = update.Type switch
             {
-                UpdateType.Message => BotOnMessageReceived(update.Message),
-                UpdateType.CallbackQuery => BotOnCallBackQueryReceived(update.CallbackQuery),
+                UpdateType.Message => BotOnMessageReceived(update.Message!),
                 _ => UnknownUpdateHandler(update)
             };
 
@@ -55,20 +55,95 @@ namespace TelegramBotAPI.Services
             return Task.CompletedTask;
         }
 
-        private async Task BotOnCallBackQueryReceived(CallbackQuery? callbackQuery)
+        private async Task BotOnMessageReceived(Message message)
         {
-            await _botClient.SendTextMessageAsync(
-                chatId: callbackQuery.Message.Chat.Id,
-                text: $"{callbackQuery.Data}");
+            _logger.LogInformation($"Recieve message type:{message.Type}");
+
+            if (message.Type != MessageType.Text)
+                return;
+
+            var action = message.Text!.Split(' ')[0] switch
+            {
+                "/inline" => SendInlineKeyboard(_botClient, message),
+                "/keyboard" => SendReplyKeyboard(_botClient, message),
+                _ => Usage(_botClient, message)
+            };
+
+            Message sentMessage =  await action;
+            _logger.LogInformation("The message was sent with id: {sentMessageId}", sentMessage.MessageId);
+
+            //await _botClient.SendTextMessageAsync(
+            //    chatId: message.Chat.Id,
+            //    text: "New message!");
         }
 
-        private async Task BotOnMessageReceived(Message? message)
+        private async Task<Message> Usage(ITelegramBotClient bot, Message message)
         {
-            _logger.LogInformation($"Xabar keldi: {message.Type}");
+            const string usage = "Usage:\n" +
+                                 "/inline   - send inline keyboard\n" +
+                                 "/keyboard - send custom keyboard\n";
 
-            await _botClient.SendTextMessageAsync(
-                chatId: message.Chat.Id,
-                text: "Botga xabar keldi");
+            return await bot.SendTextMessageAsync(chatId: message.Chat.Id,
+                                                  text: usage,
+                                                  replyMarkup: new ReplyKeyboardRemove());
+        }
+
+        static async Task<Message> SendReplyKeyboard(ITelegramBotClient bot, Message message)
+        {
+            await bot.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
+
+            // Simulate longer running task
+            await Task.Delay(500);
+
+            InlineKeyboardMarkup inlineKeyboard = new(
+                new[]
+                {
+                    // first row
+                    new []
+                    {
+                        InlineKeyboardButton.WithCallbackData("1.1", "11"),
+                        InlineKeyboardButton.WithCallbackData("1.2", "12"),
+                    },
+                    // second row
+                    new []
+                    {
+                        InlineKeyboardButton.WithCallbackData("2.1", "21"),
+                        InlineKeyboardButton.WithCallbackData("2.2", "22"),
+                    },
+                });
+
+            return await bot.SendTextMessageAsync(chatId: message.Chat.Id,
+                                                  text: "Choose",
+                                                  replyMarkup: inlineKeyboard);
+        }
+
+        static async Task<Message> SendInlineKeyboard(ITelegramBotClient bot, Message message)
+        {
+            await bot.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
+
+            // Simulate longer running task
+            await Task.Delay(500);
+
+            InlineKeyboardMarkup inlineKeyboard = new(
+                new[]
+                {
+                    // first row
+                    new []
+                    {
+                        InlineKeyboardButton.WithCallbackData("1.1", "11"),
+                        InlineKeyboardButton.WithCallbackData("1.2", "12"),
+                    },
+                    // second row
+                    new []
+                    {
+                        InlineKeyboardButton.WithCallbackData("2.1", "21"),
+                        InlineKeyboardButton.WithCallbackData("2.2", "22"),
+                    },
+                });
+
+            return await bot.SendTextMessageAsync(chatId: message.Chat.Id,
+                                                  text: "Choose",
+                                                  replyMarkup: inlineKeyboard);
         }
     }
 }

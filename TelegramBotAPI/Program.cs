@@ -63,7 +63,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 builder.Services.AddHostedService<ConfigureWebHook>();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
-            new TelegramBotClient("5238998272:AAFSYR8MFoW6rJeA4FDdLqtKbBWxR-oavvc", httpClient));
+            new TelegramBotClient(builder.Configuration["BotConfiguration:Token"], httpClient));
 builder.Services.AddScoped<HandleUpdateService>();
 
 //builder.Services.AddSwaggerGen(opt =>
@@ -143,7 +143,7 @@ app.UseAuthorization();
 app.UseSession();
 app.UseEndpoints(endpoints =>
 {
-    var token = "5238998272:AAFSYR8MFoW6rJeA4FDdLqtKbBWxR-oavvc";
+    var token = builder.Configuration["BotConfiguration:Token"];
 
     endpoints.MapControllerRoute(name: "tgwebhook",
         pattern: $"bot/{token}",
