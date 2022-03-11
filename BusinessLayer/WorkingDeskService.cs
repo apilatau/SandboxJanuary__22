@@ -1,16 +1,8 @@
 ﻿using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
-using DataLayer.Data;
-using DataLayer.Dto.MapDto;
-using DataLayer.Dtos.WorkingDeskDto;
 using DataLayer.IRepositories;
 using DataLayer.Models;
-using DataLayer.Repositories;
-using DataLayer.Responses;
 using LinqKit;
-using Mapster;
-using Microsoft.EntityFrameworkCore;
-using DataLayer.IRepositories;
 
 namespace BusinessLayer
 {
@@ -41,7 +33,6 @@ namespace BusinessLayer
         {
             return await _workingDeskRepository.ListAsync();
         }
-
         public async Task<List<WorkingDesk>> SearchSpecificWorkSpace(int? mapId, int? deskTypeId, int? number)
         {
             var predicate = PredicateBuilder.New<WorkingDesk>(true);
