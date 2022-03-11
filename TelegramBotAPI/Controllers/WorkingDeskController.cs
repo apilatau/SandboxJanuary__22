@@ -1,8 +1,6 @@
 ﻿using BusinessLayer;
 using BusinessLayer.Interfaces;
 using DataLayer.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
 namespace TelegramBotAPI.Controllers

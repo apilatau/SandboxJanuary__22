@@ -49,8 +49,9 @@ namespace BusinessLayer
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] 
-                { new Claim(ClaimTypes.Role, role.RoleName),
-                  new Claim(ClaimTypes.Name, user.TelegramId.ToString())
+                {
+                    new Claim(ClaimTypes.Role, role.RoleName),
+                    new Claim(ClaimTypes.Name, user.TelegramId.ToString())
                 }),
                 Issuer = "JWTAuthenticationIssuer",
                 Audience = "JWTAuthenticationAudience",

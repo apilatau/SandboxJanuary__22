@@ -1,4 +1,5 @@
-﻿using BusinessLayer.Interfaces;
+﻿using BusinessLayer.Exceptions;
+using BusinessLayer.Interfaces;
 using DataLayer.IRepositories;
 using DataLayer.Models;
 using LinqKit;
