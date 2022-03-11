@@ -45,7 +45,7 @@ namespace BusinessLayer
         {
 
             var booking = await reserveRepository.GetByIdAsync(booking_id);
-            var isAvailable = reserveRepository.IsAvailable(booking.StartDate, booking.EndDate);
+            var isAvailable = await reserveRepository.IsAvailable(reserve, booking.StartDate, booking.EndDate);
 
             if (!isAvailable) throw new ArgumentException("These dates are not availbale");
 
