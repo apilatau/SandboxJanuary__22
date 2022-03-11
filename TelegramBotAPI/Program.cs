@@ -59,11 +59,11 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-//builder.Services.AddSwaggerGen();
+
 builder.Services.AddHostedService<ConfigureWebHook>();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
-            new TelegramBotClient("5173236015:AAHiLg_3pCAiMk46B6t7k7HigKnMBmQqR3Y", httpClient));
+            new TelegramBotClient("5120059284:AAEW1xdREZG09BSV5akzkZaifa_nEUJOr48", httpClient));
 builder.Services.AddScoped<HandleUpdateService>();
 
 builder.Services.AddSwaggerGen(opt =>

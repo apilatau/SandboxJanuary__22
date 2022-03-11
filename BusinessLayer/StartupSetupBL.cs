@@ -1,10 +1,5 @@
 ﻿using BusinessLayer.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLayer
 {
@@ -18,6 +13,7 @@ namespace BusinessLayer
             Services.AddScoped<IBookingTypeService, BookingTypeService>();
             Services.AddScoped<IWorkingDeskService, WorkingDeskService>();
             Services.AddScoped<IRoleService, RoleService>();
+            Services.AddScoped<IOfficeService, OfficeService>();
         }
     }
 }

@@ -12,24 +12,24 @@ namespace BusinessLayer
 {
     public class CityService : ICityService
     {
-        private readonly CityRepository CityRepository;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly CityRepository cityRepository;
+        private readonly ApplicationDbContext dbContext;
         internal DbSet<City> dbSet;
 
         public CityService(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext;
-            dbSet = _dbContext.Set<City>();
+            this.dbContext = dbContext;
+            dbSet = dbContext.Set<City>();
         }
 
         public async Task<ResponseBase<CityResponseDto>> AddCity(CreateCityDto cityDto)
         {
             var cityResponse = new ResponseBase<CityResponseDto>();
-            var country = await _dbContext.Cities.FirstOrDefaultAsync(u => u.Id == cityDto.CountryId);
+            var country = await dbContext.Cities.FirstOrDefaultAsync(u => u.Id == cityDto.CountryId);
             if (country == null) throw new CountryCustomException("Office not found");
 
             City newCity = cityDto.Adapt<City>();
-            await CityRepository.AddAsync(newCity);
+            await cityRepository.AddAsync(newCity);
             var cityResponseDto = newCity.Adapt<CityResponseDto>(); // Mapster
             cityResponse.Data = cityResponseDto;
 

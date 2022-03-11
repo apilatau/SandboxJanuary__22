@@ -11,10 +11,10 @@ namespace BusinessLayer
 {
     public class ReserveService : IReserveService
     {
-        private readonly ReserveRepository ReserveRepository;
-        private readonly ApplicationDbContext _dbContext;
         private AppSettings _appSettings;
         private readonly IReserveRepository reserveRepository;
+        private readonly ReserveRepository ReserveRepository;
+        private readonly ApplicationDbContext _dbContext;
 
         internal DbSet<Reserve> dbSet;
 
