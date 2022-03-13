@@ -3,6 +3,7 @@ using BusinessLayer.Interfaces;
 using DataLayer.Data;
 using DataLayer.Dtos.CityDto;
 using DataLayer.Dtos.OfficeDto;
+using DataLayer.IRepositories;
 using DataLayer.Models;
 using DataLayer.Repositories;
 using DataLayer.Responses;
@@ -13,71 +14,93 @@ namespace BusinessLayer
 {
     public class OfficeService : IOfficeService
     {
-        private readonly OfficeRepository _officeRepository;
+        private readonly IOfficeRepository _officeRepository;
         private readonly ApplicationDbContext _dbContext;
         internal DbSet<Office> dbSet;
 
-        public OfficeService(ApplicationDbContext dbContext)
+        public OfficeService(ApplicationDbContext dbContext, IOfficeRepository officeRepository)
         {
             _dbContext = dbContext;
             dbSet = _dbContext.Set<Office>();
+            _officeRepository = officeRepository;
         }
 
-        public async Task<ResponseBase<OfficeResponseDto>> AddOffice(CreateOfficeDto officeDto)
+        public async Task<int> AddOffice(Office office)
         {
-            var officeResponse = new ResponseBase<OfficeResponseDto>();
-            var city = await _dbContext.Offices.FirstOrDefaultAsync(u => u.Id == officeDto.CityId);
+            var city = await _dbContext.Cities.FirstOrDefaultAsync(u => u.Id == office.CityId);
             if (city == null) throw new OfficeCustomException("City not found");
+            await _officeRepository.AddAsync(office);
+            await _officeRepository.SaveChangesAsync();
 
-            Office newOffice = officeDto.Adapt<Office>();
-            await _officeRepository.AddAsync(newOffice);
-            var officeResponseDto = newOffice.Adapt<OfficeResponseDto>(); // Mapster
-            officeResponse.Data = officeResponseDto;
-
-            return officeResponse;
-        }
-        public Task<ResponseBase<OfficeResponseDto>> DeleteOffice(int id, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
+            return office.Id;
         }
 
-        public async Task<List<OfficeResponseDto>> GetAllOffices(int Cityid = default, CancellationToken cancellationToken = default)
+        public async Task<int> DeleteOffice(int id)
         {
-            if (Cityid != null)
+            var office = await _dbContext.Offices.FirstOrDefaultAsync(x => x.Id == id);
+            if (office != null)
             {
-                List<OfficeResponseDto> offices = await dbSet
-                .Select(m => m.Adapt<OfficeResponseDto>())
+                await _officeRepository.DeleteAsync(office);
+            }
+            await _officeRepository.SaveChangesAsync();
+            return office.Id;
+        }
+
+        public async Task<List<Office>> GetAllOfficesInCity(int Cityid)
+        {
+            List<Office> offices = await dbSet
+                .Select(m => m)
                 .Where(m => m.CityId == Cityid)
-                .ToListAsync(cancellationToken);
-                return offices;
-            }
-            else
-            {
-                List<OfficeResponseDto> offices = await dbSet
-                .Select(m => m.Adapt<OfficeResponseDto>())
-                .ToListAsync(cancellationToken);
-                return offices;
-            }
-
+                .ToListAsync();
+            return offices;
         }
 
-        public Task<ResponseBase<OfficeResponseDto>> GetOfficeById(int id, CancellationToken cancellationToken = default)
+        public async Task<Office> GetOfficeById(int id)
         {
-            throw new NotImplementedException();
+            var office = await _dbContext.Offices.FirstOrDefaultAsync(x => x.Id == id);
+            return office;
         }
 
-        public async Task<List<OfficeResponseDto>> GetOfficesForEachCity(List<CityResponseDto> cities, CancellationToken cancellationToken = default)
+        public async Task<List<Office>> GetOfficesForEachCity(List<City> cities)
         {
-            var officeResponseDtosList = new List<OfficeResponseDto>();
+            var offices = new List<Office>();
             foreach (var city in cities)
             {
-                var offices = await dbSet
-                    .Select(m => m.Adapt<OfficeResponseDto>())
-                    .Where(m => m.CityId == city.CityId)
-                    .ToListAsync(cancellationToken);
-                officeResponseDtosList.AddRange(offices);
+                var officesofEachCity = dbSet
+                    .Select(m => m)
+                    .Where(m => m.CityId == city.Id);
+                offices.AddRange(officesofEachCity);
             };
-            return officeResponseDtosList;
+            return offices;
         }
     }
 }
+
+
+//public async Task<ResponseBase<OfficeResponseDto>> AddOffice(CreateOfficeDto officeDto)
+//{
+//    var officeResponse = new ResponseBase<OfficeResponseDto>();
+//    var city = await _dbContext.Offices.FirstOrDefaultAsync(u => u.Id == officeDto.CityId);
+//    if (city == null) throw new OfficeCustomException("City not found");
+
+//    Office newOffice = officeDto.Adapt<Office>();
+//    await _officeRepository.AddAsync(newOffice);
+//    var officeResponseDto = newOffice.Adapt<OfficeResponseDto>(); // Mapster
+//    officeResponse.Data = officeResponseDto;
+
+//    return officeResponse;
+//}
+
+//public async Task<List<OfficeResponseDto>> GetOfficesForEachCity(List<CityResponseDto> cities, CancellationToken cancellationToken = default)
+//{
+//    var officeResponseDtosList = new List<OfficeResponseDto>();
+//    foreach (var city in cities)
+//    {
+//        var offices = await dbSet
+//            .Select(m => m.Adapt<OfficeResponseDto>())
+//            .Where(m => m.CityId == city.CityId)
+//            .ToListAsync(cancellationToken);
+//        officeResponseDtosList.AddRange(offices);
+//    };
+//    return officeResponseDtosList;
+//}

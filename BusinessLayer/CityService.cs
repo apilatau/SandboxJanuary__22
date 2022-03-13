@@ -1,57 +1,59 @@
 ﻿using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
 using DataLayer.Data;
-using DataLayer.Dtos.CityDto;
+using DataLayer.IRepositories;
 using DataLayer.Models;
 using DataLayer.Repositories;
-using DataLayer.Responses;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLayer
 {
     public class CityService : ICityService
     {
-        private readonly CityRepository CityRepository;
+        private readonly ICityRepository _cityRepository;
         private readonly ApplicationDbContext _dbContext;
         internal DbSet<City> dbSet;
 
-        public CityService(ApplicationDbContext dbContext)
+        public CityService(ApplicationDbContext dbContext, ICityRepository cityRepository)
         {
             _dbContext = dbContext;
             dbSet = _dbContext.Set<City>();
+            _cityRepository = cityRepository;
         }
 
-        public async Task<ResponseBase<CityResponseDto>> AddCity(CreateCityDto cityDto)
+        public async Task<int> AddCity(City city)
         {
-            var cityResponse = new ResponseBase<CityResponseDto>();
-            var country = await _dbContext.Cities.FirstOrDefaultAsync(u => u.Id == cityDto.CountryId);
-            if (country == null) throw new CountryCustomException("Office not found");
+            var country = await _dbContext.Cities.FirstOrDefaultAsync(u => u.Id == city.Id);
+            if (country == null) throw new CountryCustomException("Country not found");
+            await _cityRepository.AddAsync(city);
 
-            City newCity = cityDto.Adapt<City>();
-            await CityRepository.AddAsync(newCity);
-            var cityResponseDto = newCity.Adapt<CityResponseDto>(); // Mapster
-            cityResponse.Data = cityResponseDto;
-
-            return cityResponse;
+            return city.Id;
         }
-        public Task<ResponseBase<CreateCityDto>> DeleteCity(int id, CancellationToken cancellationToken = default)
+        public async Task<int> DeleteCity(int id)
         {
-            throw new NotImplementedException();
+            var city = await _dbContext.Cities.FirstOrDefaultAsync(x => x.Id == id);
+            if (city != null)
+            {
+                await _cityRepository.DeleteAsync(city);
+            }
+            await _cityRepository.SaveChangesAsync();
+
+            return id;
         }
 
-        public async Task<List<CityResponseDto>> GetAllCities(int id, CancellationToken cancellationToken = default)
+        public async Task<List<City>> GetAllCities(int id)
         {
-            List<CityResponseDto> cities = await dbSet
-                .Select(m => m.Adapt<CityResponseDto>())
-                .Where(m => m.CountryId == id)
-                .ToListAsync(cancellationToken);
+            List<City> cities = await dbSet
+                .Select(m => m)
+                .Where(m => m.Id == id)
+                .ToListAsync();
             return cities;
         }
 
-        public Task<ResponseBase<CreateCityDto>> GetCityById(int id, CancellationToken cancellationToken = default)
+        public async Task<City> GetCityById(int id)
         {
-            throw new NotImplementedException();
+            var city = await _dbContext.Cities.FirstOrDefaultAsync(x => x.Id == id);
+            return city;
         }
     }
 }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Dtos.ReportDto
 {
-    public class RequestUserReportDto
+    public class RequestCityReport
     {
-        public int UserId { get; set; }
+        public int CityId { get; set; }
         public ReportTimeline Timeline { get; set; }
         public DetailsEnum DetailsEnum { get; set; }
     }

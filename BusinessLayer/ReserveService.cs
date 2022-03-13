@@ -11,7 +11,7 @@ namespace BusinessLayer
 {
     public class ReserveService : IReserveService
     {
-        private readonly ReserveRepository ReserveRepository;
+        private readonly IReserveRepository _reserveRepository;
         private readonly ApplicationDbContext _dbContext;
         private AppSettings _appSettings;
         private readonly IReserveRepository reserveRepository;
@@ -20,20 +20,13 @@ namespace BusinessLayer
 
         public ReserveService(ApplicationDbContext dbContext, IReserveRepository reserveRepository)
         {
-            this.reserveRepository = reserveRepository;
+            _reserveRepository = reserveRepository;
             _appSettings = new AppSettings();
             _dbContext = dbContext;
             dbSet = _dbContext.Set<Reserve>();
         }
 
-        public async Task<List<ReserveResponseDto>> GetAllReserves(int id, CancellationToken cancellationToken = default)
-        {
-            List<ReserveResponseDto> reserves = await dbSet
-                .Select(m => m.Adapt<ReserveResponseDto>())
-                .Where(m => m.UserId == id)
-                .ToListAsync(cancellationToken);
-            return reserves;
-        }
+        
 
         public async Task<Reserve> AddAsync(Reserve reserve)
         {
@@ -89,6 +82,26 @@ namespace BusinessLayer
         }
 
         public async Task UpdateAsync(Reserve reserve) => await reserveRepository.UpdateAsync(reserve);
+
+        public Task<List<Reserve>> GetAllReserves(int id = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Reserve>> GetReservesForEachEmployee(List<Reserve> reserves)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 
+
+
+//public async Task<List<ReserveResponseDto>> GetAllReserves(int id, CancellationToken cancellationToken = default)
+//{
+//    List<ReserveResponseDto> reserves = await dbSet
+//        .Select(m => m.Adapt<ReserveResponseDto>())
+//        .Where(m => m.UserId == id)
+//        .ToListAsync(cancellationToken);
+//    return reserves;
+//}

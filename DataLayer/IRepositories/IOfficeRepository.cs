@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataLayer.IRepositories
 {
-    internal interface IOfficeRepository : IRepositoryBase<Office>
+    public interface IOfficeRepository : IRepositoryBase<Office>
     {
     }
 }
