@@ -1,5 +1,3 @@
-﻿using DataLayer.Models;
-
 namespace BusinessLayer.Interfaces
 {
     public interface IReserveService

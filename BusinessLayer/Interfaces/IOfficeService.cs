@@ -7,8 +7,6 @@ namespace BusinessLayer.Interfaces
 {
     public interface IOfficeService
     {
-        Task<List<Office>> GetAllOfficesInCity(int cityId);
-
         Task<int> DeleteOffice(int id);
 
         Task<int> AddOffice(Office office);

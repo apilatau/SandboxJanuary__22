@@ -14,23 +14,12 @@ namespace BusinessLayer
 {
     public class MapService : IMapService
     {
-        private readonly IMapRepository _mapRepository;
-        private readonly ApplicationDbContext _dbContext;
-        internal DbSet<Map> dbSet;
-        public MapService(ApplicationDbContext dbContext, IMapRepository mapRepository)
-        {
-            _dbContext = dbContext;
-            dbSet = _dbContext.Set<Map>();
-            _mapRepository = mapRepository;
+
         }
 
         public async Task<int> AddMap(Map map)
         {
-            var office = await _dbContext.Offices.FirstOrDefaultAsync(u => u.Id == map.Id);
-            if (office == null) throw new OfficeCustomException("Office not found");
-            await _mapRepository.AddAsync(map);
-            await _mapRepository.SaveChangesAsync();
-            return map.Id;
+
         }
 
         public async Task<int> DeleteMap(int id)

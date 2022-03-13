@@ -11,10 +11,10 @@ namespace BusinessLayer
 {
     public class ReserveService : IReserveService
     {
-        private readonly IReserveRepository _reserveRepository;
-        private readonly ApplicationDbContext _dbContext;
         private AppSettings _appSettings;
         private readonly IReserveRepository reserveRepository;
+        private readonly ReserveRepository ReserveRepository;
+        private readonly ApplicationDbContext _dbContext;
 
         internal DbSet<Reserve> dbSet;
 
@@ -38,7 +38,7 @@ namespace BusinessLayer
         {
 
             var booking = await reserveRepository.GetByIdAsync(booking_id);
-            var isAvailable = reserveRepository.IsAvailable(booking.StartDate, booking.EndDate);
+            var isAvailable = await reserveRepository.IsAvailable(reserve, booking.StartDate, booking.EndDate);
 
             if (!isAvailable) throw new ArgumentException("These dates are not availbale");
 

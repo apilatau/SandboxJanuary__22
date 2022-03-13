@@ -1,8 +1,6 @@
 ﻿using BusinessLayer;
 using BusinessLayer.Interfaces;
 using DataLayer.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
 namespace TelegramBotAPI.Controllers
@@ -41,8 +39,13 @@ namespace TelegramBotAPI.Controllers
         {
             return await _workingDeskService.ListAsync();
         }
-        
 
-        
+        [HttpGet("SearchWorkspace")]
+        public async Task<List<WorkingDesk>> SearchSpecificWorkSpace(int? mapId, int? deskTypeId, int? number)
+        {
+            return await _workingDeskService.SearchSpecificWorkSpace(mapId, deskTypeId, number);
+        }
+
+
     }
 }

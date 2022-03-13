@@ -10,24 +10,14 @@ namespace BusinessLayer
 {
     public class CityService : ICityService
     {
-        private readonly ICityRepository _cityRepository;
-        private readonly ApplicationDbContext _dbContext;
         internal DbSet<City> dbSet;
 
         public CityService(ApplicationDbContext dbContext, ICityRepository cityRepository)
         {
-            _dbContext = dbContext;
-            dbSet = _dbContext.Set<City>();
-            _cityRepository = cityRepository;
         }
 
         public async Task<int> AddCity(City city)
         {
-            var country = await _dbContext.Cities.FirstOrDefaultAsync(u => u.Id == city.Id);
-            if (country == null) throw new CountryCustomException("Country not found");
-            await _cityRepository.AddAsync(city);
-
-            return city.Id;
         }
         public async Task<int> DeleteCity(int id)
         {

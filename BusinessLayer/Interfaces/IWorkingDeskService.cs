@@ -1,7 +1,4 @@
-﻿using DataLayer.Dto.MapDto;
-using DataLayer.Dtos.WorkingDeskDto;
-using DataLayer.Models;
-using DataLayer.Responses;
+﻿using DataLayer.Models;
 
 namespace BusinessLayer.Interfaces
 {
@@ -16,6 +13,7 @@ namespace BusinessLayer.Interfaces
         Task<WorkingDesk> GetByIdAsync(int id);
 
         Task UpdateAsync(WorkingDesk workingDesk);
+        Task<List<WorkingDesk>> SearchSpecificWorkSpace(int? mapId, int? deskTypeId, int? number);
 
         Task<List<WorkingDesk>> GetAllWorkingDesks(int id = default);
 

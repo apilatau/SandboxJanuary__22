@@ -1,12 +1,8 @@
-﻿using BusinessLayer.Interfaces;
-using BusinessLayer.Exceptions;
+﻿using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
-using DataLayer.Data;
-using DataLayer.Models;
-using DataLayer.Repositories;
-using DataLayer.Responses;
-using Microsoft.EntityFrameworkCore;
 using DataLayer.IRepositories;
+using DataLayer.Models;
+using LinqKit;
 
 namespace BusinessLayer
 {
@@ -51,6 +47,25 @@ namespace BusinessLayer
         public async Task<List<WorkingDesk>> ListAsync()
         {
             return await _workingDeskRepository.ListAsync();
+        }
+        public async Task<List<WorkingDesk>> SearchSpecificWorkSpace(int? mapId, int? deskTypeId, int? number)
+        {
+            var predicate = PredicateBuilder.New<WorkingDesk>(true);
+            if (mapId != null)
+            {
+                predicate = predicate.And(i => i.MapId.ToString().ToLower().Contains(mapId.ToString().ToLower()));
+            }
+            if (deskTypeId != null)
+            {
+                predicate = predicate.And(i => i.DeskTypeId.ToString().ToLower().Contains(deskTypeId.ToString().ToLower()));
+            }
+            if (number != null)
+            {
+                predicate = predicate.And(i => i.Number.ToString().ToLower() == number.ToString().ToLower());
+            }
+
+            var data = await _workingDeskRepository.ListAsync();
+            return data.Where(predicate).ToList();
         }
 
         public async Task UpdateAsync(WorkingDesk workingDesk) => await _workingDeskRepository.UpdateAsync(workingDesk);

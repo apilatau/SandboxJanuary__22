@@ -7,6 +7,7 @@ using DataLayer.IRepositories;
 using DataLayer.Models;
 using DataLayer.Repositories;
 using DataLayer.Responses;
+using LinqKit;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,9 +18,11 @@ namespace BusinessLayer
         private readonly IOfficeRepository _officeRepository;
         private readonly ApplicationDbContext _dbContext;
         internal DbSet<Office> dbSet;
+        private readonly IOfficeRepository officeRepository;
 
         public OfficeService(ApplicationDbContext dbContext, IOfficeRepository officeRepository)
         {
+            this.officeRepository = officeRepository;
             _dbContext = dbContext;
             dbSet = _dbContext.Set<Office>();
             _officeRepository = officeRepository;
@@ -31,34 +34,11 @@ namespace BusinessLayer
             if (city == null) throw new OfficeCustomException("City not found");
             await _officeRepository.AddAsync(office);
             await _officeRepository.SaveChangesAsync();
-
-            return office.Id;
         }
 
         public async Task<int> DeleteOffice(int id)
         {
-            var office = await _dbContext.Offices.FirstOrDefaultAsync(x => x.Id == id);
-            if (office != null)
-            {
-                await _officeRepository.DeleteAsync(office);
-            }
-            await _officeRepository.SaveChangesAsync();
-            return office.Id;
-        }
 
-        public async Task<List<Office>> GetAllOfficesInCity(int Cityid)
-        {
-            List<Office> offices = await dbSet
-                .Select(m => m)
-                .Where(m => m.CityId == Cityid)
-                .ToListAsync();
-            return offices;
-        }
-
-        public async Task<Office> GetOfficeById(int id)
-        {
-            var office = await _dbContext.Offices.FirstOrDefaultAsync(x => x.Id == id);
-            return office;
         }
 
         public async Task<List<Office>> GetOfficesForEachCity(List<City> cities)
