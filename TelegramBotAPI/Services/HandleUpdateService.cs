@@ -64,6 +64,7 @@ namespace TelegramBotAPI.Services
 
             var action = message.Text!.Split(' ')[0] switch
             {
+                "/start" => StartOver(_botClient, message),
                 "/inline" => SendInlineKeyboard(_botClient, message),
                 "/keyboard" => SendReplyKeyboard(_botClient, message),
                 _ => Usage(_botClient, message)
@@ -77,9 +78,33 @@ namespace TelegramBotAPI.Services
             //    text: "New message!");
         }
 
+        private async Task<Message> StartOver(ITelegramBotClient bot, Message message)
+        {
+            ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup(" ");
+
+            markup.Keyboard = new KeyboardButton[][]
+            {
+                new KeyboardButton[]
+                {
+                    new KeyboardButton("Book a workplace"),
+                    new KeyboardButton("Change or Cancel a booking")
+                }
+                
+            };
+            markup.ResizeKeyboard = true;
+
+            return await bot.SendTextMessageAsync(
+                chatId: message.Chat.Id,
+                text: "What do you want to today ?" ,
+                replyMarkup: markup
+                );
+                
+        }
+
         private async Task<Message> Usage(ITelegramBotClient bot, Message message)
         {
             const string usage = "Usage:\n" +
+                                 "/start   - start over"+
                                  "/inline   - send inline keyboard\n" +
                                  "/keyboard - send custom keyboard\n";
 
