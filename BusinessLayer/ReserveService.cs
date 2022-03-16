@@ -37,7 +37,7 @@ namespace BusinessLayer
 
         public async Task<Reserve> AddAsync(Reserve reserve)
         {
-            if (reserveRepository.ListAsync().Result.Select(x => x.WorkingDeskId).Contains(reserve.WorkingDeskId))
+            if (reserveRepository.ListAsync().Result.Where(x=>x.EndDate>=reserve.EndDate).Select(x => x.WorkingDeskId).Contains(reserve.WorkingDeskId))
             {
                 throw new ArgumentException("the desk already reserved");
             }
