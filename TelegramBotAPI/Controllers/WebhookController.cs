@@ -14,5 +14,12 @@ namespace TelegramBotAPI.Controllers
 
             return Ok();
         }
+
+        [Route("ping")]
+        public string Ping()
+        {
+
+            return "Hello its ping";
+        }
     }
 }

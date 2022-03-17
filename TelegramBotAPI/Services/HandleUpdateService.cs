@@ -1,8 +1,10 @@
-﻿using Telegram.Bot;
+﻿using BusinessLayer;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramBotAPI.Controllers;
 
 namespace TelegramBotAPI.Services
 {
@@ -22,6 +24,8 @@ namespace TelegramBotAPI.Services
             var handler = update.Type switch
             {
                 UpdateType.Message => BotOnMessageReceived(update.Message!),
+                UpdateType.CallbackQuery => BotOnCallbackQueryReceived(update.CallbackQuery!),
+                UpdateType.ChosenInlineResult => BotOnChosenInlineResultReceived(update.ChosenInlineResult!),
                 _ => UnknownUpdateHandler(update)
             };
 
@@ -33,6 +37,22 @@ namespace TelegramBotAPI.Services
             {
                 await HandlerErrorAsync(ex);
             }
+        }
+
+        private async Task BotOnChosenInlineResultReceived(ChosenInlineResult chosenInlineResult)
+        {
+            await _botClient.AnswerCallbackQueryAsync(
+                callbackQueryId: chosenInlineResult.ResultId,
+                text: chosenInlineResult.ResultId);
+                
+        }
+
+        private async Task BotOnCallbackQueryReceived(CallbackQuery callbackQuery)
+        {
+            await _botClient.AnswerCallbackQueryAsync(
+                callbackQueryId: callbackQuery.Id,
+                text: $"Reseived {callbackQuery.Data}"
+                );
         }
 
         public Task HandlerErrorAsync(Exception ex)
@@ -91,6 +111,7 @@ namespace TelegramBotAPI.Services
                 }
                 
             };
+
             markup.ResizeKeyboard = true;
 
             return await bot.SendTextMessageAsync(
@@ -104,7 +125,7 @@ namespace TelegramBotAPI.Services
         private async Task<Message> Usage(ITelegramBotClient bot, Message message)
         {
             const string usage = "Usage:\n" +
-                                 "/start   - start over"+
+                                 "/start   - start over\n"+
                                  "/inline   - send inline keyboard\n" +
                                  "/keyboard - send custom keyboard\n";
 
