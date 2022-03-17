@@ -1,9 +1,9 @@
 ﻿using BusinessLayer;
-using BusinessLayer.Authorization;
 using BusinessLayer.Interfaces;
 using DataLayer.Models;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace TelegramBotAPI.Controllers
 {
@@ -24,7 +24,7 @@ namespace TelegramBotAPI.Controllers
         }
 
         [HttpPut]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditBookingForAdminsAsync(int booking_id, Reserve reserve)
         {
             
