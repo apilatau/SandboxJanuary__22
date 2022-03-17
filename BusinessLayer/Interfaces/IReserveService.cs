@@ -8,5 +8,6 @@ namespace BusinessLayer.Interfaces
         Task<List<ReserveResponseDto>> GetAllReserves(int id = default, CancellationToken cancellationToken = default);
 
         //  Task<List<ReserveResponseDto>> GetReservesForEachEmployee(List<ReserveResponseDto> reserves, CancellationToken cancellationToken = default);
+        public string TestBot();
     }
 }

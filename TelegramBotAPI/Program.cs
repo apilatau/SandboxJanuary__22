@@ -9,6 +9,7 @@ using Newtonsoft.Json.Converters;
 using System.Reflection;
 using System.Text;
 using Telegram.Bot;
+using TelegramBotAPI.Commands;
 using TelegramBotAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddNewtonsoftJson(opts => opts.SerializerSettings.Converters.Add(new StringEnumConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDataServices();
 builder.Services.AddBusinessServices();
@@ -65,6 +68,9 @@ builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
             new TelegramBotClient(builder.Configuration["BotConfiguration:Token"], httpClient));
 builder.Services.AddScoped<HandleUpdateService>();
+builder.Services.AddScoped<BaseCommand, StartCommand>();
+builder.Services.AddScoped<BaseCommand, BookCommand>();
+builder.Services.AddScoped<BaseCommand, ChangeCommand>();
 
 //builder.Services.AddSwaggerGen(opt =>
 //{
