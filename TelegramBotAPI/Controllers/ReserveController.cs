@@ -22,6 +22,12 @@ namespace TelegramBotAPI.Controllers
 
         }
 
+        [HttpPost("BookByParameters")]
+        public async Task<Reserve> BookByParameters(int userId, int workingDeskId, DateTime startDate, DateTime endDate, DayOfWeek[] selectedDays, int frequency)
+        {
+            return await reserveService.BookByParameters(userId, workingDeskId, startDate, endDate, selectedDays, frequency);
+        }
+
 
         //[HttpPost("AddBooking")]
         //public async Task<Reserve> AddReserve([FromBody]Reserve reserve)
