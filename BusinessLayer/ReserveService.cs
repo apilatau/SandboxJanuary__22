@@ -39,6 +39,11 @@ namespace BusinessLayer
         {
             return await reserveRepository.AddAsync(reserve);
         }
+        
+        public string  TestBot()
+        {
+            return "from reserve service";
+        }
 
         public async Task EditBookingForAdminsAsync(int booking_id, Reserve reserve) 
         {

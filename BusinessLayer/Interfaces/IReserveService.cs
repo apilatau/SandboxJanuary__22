@@ -10,5 +10,6 @@ namespace BusinessLayer.Interfaces
         public Task EditBookingForAdminsAsync(int booking_id, Reserve reserve);
 
         //  Task<List<ReserveResponseDto>> GetReservesForEachEmployee(List<ReserveResponseDto> reserves, CancellationToken cancellationToken = default);
+        public string TestBot();
     }
 }

@@ -24,7 +24,7 @@ namespace TelegramBotAPI.Services
 
             var botClient = scope.ServiceProvider.GetRequiredService<ITelegramBotClient>();
 
-            var webhookAddress = $@"{_botConfig.HostAddress}/bot/{_botConfig.Token}";
+            var webhookAddress = @$"{_botConfig.HostAddress}/bot/{_botConfig.Token}";
 
             _logger.LogInformation("Setting webhook");
 
