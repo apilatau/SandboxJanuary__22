@@ -67,6 +67,7 @@ builder.Services.AddHostedService<ConfigureWebHook>();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
             new TelegramBotClient(builder.Configuration["BotConfiguration:Token"], httpClient));
+
 builder.Services.AddScoped<HandleUpdateService>();
 builder.Services.AddScoped<IStart, Start>();
 builder.Services.AddScoped<IBookingState, SelectCity>();

@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace DataLayer.Migrations
 {
-    public partial class InitialCreateAfter : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,6 +21,19 @@ namespace DataLayer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BookingTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Country",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Country", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -53,6 +66,23 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Offices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: false),
+                    CityId = table.Column<int>(type: "integer", nullable: false),
+                    CountryId = table.Column<int>(type: "integer", nullable: false),
+                    Parking = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Offices", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Permissions",
                 columns: table => new
                 {
@@ -79,24 +109,21 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reserves",
+                name: "City",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    BookingTypeId = table.Column<int>(type: "integer", nullable: false),
-                    Frequency = table.Column<int>(type: "integer", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    CountryId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reserves", x => x.Id);
+                    table.PrimaryKey("PK_City", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Reserves_BookingTypes_BookingTypeId",
-                        column: x => x.BookingTypeId,
-                        principalTable: "BookingTypes",
+                        name: "FK_City_Country_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Country",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -182,9 +209,77 @@ namespace DataLayer.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Users_City_CityId",
+                        column: x => x.CityId,
+                        principalTable: "City",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Users_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Log",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LogTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    EventType = table.Column<string>(type: "text", nullable: false),
+                    ObjectName = table.Column<string>(type: "text", nullable: false),
+                    ObjectType = table.Column<string>(type: "text", nullable: false),
+                    SqlCommand = table.Column<string>(type: "text", nullable: false),
+                    EventDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Log", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Log_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reserves",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    WorkingDeskId = table.Column<int>(type: "integer", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    BookingTypeId = table.Column<int>(type: "integer", nullable: false),
+                    IsReccuring = table.Column<bool>(type: "boolean", nullable: false),
+                    Frequency = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reserves", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reserves_BookingTypes_BookingTypeId",
+                        column: x => x.BookingTypeId,
+                        principalTable: "BookingTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reserves_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reserves_WorkingDesks_WorkingDeskId",
+                        column: x => x.WorkingDeskId,
+                        principalTable: "WorkingDesks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -219,6 +314,16 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_City_CountryId",
+                table: "City",
+                column: "CountryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Log_UserId",
+                table: "Log",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reports_ReserveId",
                 table: "Reports",
                 column: "ReserveId");
@@ -234,6 +339,16 @@ namespace DataLayer.Migrations
                 column: "BookingTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reserves_UserId",
+                table: "Reserves",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reserves_WorkingDeskId",
+                table: "Reserves",
+                column: "WorkingDeskId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RolePermissions_PermissionId",
                 table: "RolePermissions",
                 column: "PermissionId");
@@ -242,6 +357,11 @@ namespace DataLayer.Migrations
                 name: "IX_RolePermissions_RoleId",
                 table: "RolePermissions",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_CityId",
+                table: "Users",
+                column: "CityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_RoleId",
@@ -262,22 +382,37 @@ namespace DataLayer.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Log");
+
+            migrationBuilder.DropTable(
+                name: "Offices");
+
+            migrationBuilder.DropTable(
                 name: "Reports");
 
             migrationBuilder.DropTable(
                 name: "RolePermissions");
 
             migrationBuilder.DropTable(
-                name: "WorkingDesks");
+                name: "Reserves");
 
             migrationBuilder.DropTable(
-                name: "Reserves");
+                name: "Permissions");
+
+            migrationBuilder.DropTable(
+                name: "BookingTypes");
 
             migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Permissions");
+                name: "WorkingDesks");
+
+            migrationBuilder.DropTable(
+                name: "City");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "DeskType");
@@ -286,10 +421,7 @@ namespace DataLayer.Migrations
                 name: "Maps");
 
             migrationBuilder.DropTable(
-                name: "BookingTypes");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
+                name: "Country");
         }
     }
 }
