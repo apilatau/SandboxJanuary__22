@@ -23,6 +23,7 @@ namespace TelegramBotAPI.Controllers
 
         }
 
+
         [HttpPut]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditBookingForAdminsAsync(int booking_id, Reserve reserve)
@@ -31,6 +32,12 @@ namespace TelegramBotAPI.Controllers
             await reserveService.EditBookingForAdminsAsync(booking_id, reserve);
 
             return Ok();
+        }
+        
+        [HttpPost("BookByParameters")]
+        public async Task<Reserve> BookByParameters(int userId, int workingDeskId, DateTime startDate, DateTime endDate, DayOfWeek[] selectedDays, int frequency)
+        {
+            return await reserveService.BookByParameters(userId, workingDeskId, startDate, endDate, selectedDays, frequency);
         }
 
 
