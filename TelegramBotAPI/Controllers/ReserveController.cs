@@ -2,7 +2,8 @@
 using BusinessLayer.Interfaces;
 using DataLayer.Models;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace TelegramBotAPI.Controllers
 {
@@ -22,6 +23,17 @@ namespace TelegramBotAPI.Controllers
 
         }
 
+
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditBookingForAdminsAsync(int booking_id, Reserve reserve)
+        {
+            
+            await reserveService.EditBookingForAdminsAsync(booking_id, reserve);
+
+            return Ok();
+        }
+        
         [HttpPost("BookByParameters")]
         public async Task<Reserve> BookByParameters(int userId, int workingDeskId, DateTime startDate, DateTime endDate, DayOfWeek[] selectedDays, int frequency)
         {

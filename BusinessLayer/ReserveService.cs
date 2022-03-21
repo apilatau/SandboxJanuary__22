@@ -40,6 +40,20 @@ namespace BusinessLayer
             return await reserveRepository.AddAsync(reserve);
         }
 
+        public async Task EditBookingForAdminsAsync(int booking_id, Reserve reserve) 
+        {
+            var booking = await reserveRepository.GetByIdAsync(booking_id);
+            var isAvailable = await reserveRepository.IsAvailable(reserve, booking.StartDate, booking.EndDate);
+            if (!isAvailable) throw new ArgumentException("These dates are not availbale");
+
+            booking.StartDate = reserve.StartDate;
+            booking.EndDate = reserve.EndDate;
+            booking.BookingType = reserve.BookingType;
+            booking.Frequency = reserve.Frequency;
+
+            await reserveRepository.SaveChangesAsync();
+         }
+
         public async Task<Reserve> AddXAsync(Reserve reserve)
         {
             if (reserveRepository.ListAsync().Result.Select(x => x.WorkingDeskId).Contains(reserve.WorkingDeskId))
