@@ -9,8 +9,8 @@ using Newtonsoft.Json.Converters;
 using System.Reflection;
 using System.Text;
 using Telegram.Bot;
-using TelegramBotAPI.Commands;
 using TelegramBotAPI.Services;
+using TelegramBotAPI.States;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,75 +62,77 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<ConfigureWebHook>();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
             new TelegramBotClient(builder.Configuration["BotConfiguration:Token"], httpClient));
 builder.Services.AddScoped<HandleUpdateService>();
-builder.Services.AddScoped<BaseCommand, StartCommand>();
-builder.Services.AddScoped<BaseCommand, BookCommand>();
-builder.Services.AddScoped<BaseCommand, ChangeCommand>();
+builder.Services.AddScoped<IStart, Start>();
+builder.Services.AddScoped<IBookingState, SelectCity>();
+builder.Services.AddScoped<IBookingState, SelectOffice>();
+builder.Services.AddScoped<IBookingState, SelectStartDate>();
 
-//builder.Services.AddSwaggerGen(opt =>
-//{
-//    opt.SwaggerDoc("v1", new OpenApiInfo 
-//    { 
-//        Title = "TelegramBotAPI", 
-//        Version = "v1",
-//        Description = "An API to perform Telegram Bot operations",
-//        TermsOfService = new Uri("https://core.telegram.org/api/terms"),
-//        Contact = new OpenApiContact
-//        {
-//            Name = "Example Contact",
-//            Url = new Uri("https://example.com/contact")
-//        },
-//        License = new OpenApiLicense
-//        {
-//            Name = "Example License",
-//            Url = new Uri("https://example.com/license")
-//        }
-//    });
 
-//    // using System.Reflection;
-//    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-//    opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+builder.Services.AddSwaggerGen(opt =>
+{
+    opt.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "TelegramBotAPI",
+        Version = "v1",
+        Description = "An API to perform Telegram Bot operations",
+        TermsOfService = new Uri("https://core.telegram.org/api/terms"),
+        Contact = new OpenApiContact
+        {
+            Name = "Example Contact",
+            Url = new Uri("https://example.com/contact")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Example License",
+            Url = new Uri("https://example.com/license")
+        }
+    });
 
-//    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-//    {
-//        In = ParameterLocation.Header,
-//        Description = "Please enter token",
-//        Name = "Authorization",
-//        Type = SecuritySchemeType.Http,
-//        BearerFormat = "JWT",
-//        Scheme = "bearer"
-//    });
+   // using System.Reflection;
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
-//    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-//    {
-//        {
-//            new OpenApiSecurityScheme
-//            {
-//                Reference = new OpenApiReference
-//                {
-//                    Type=ReferenceType.SecurityScheme,
-//                    Id="Bearer"
-//                }
-//            },
-//            new string[]{}
-//        }
-//    });
-//});
-//builder.Services.AddSwaggerGenNewtonsoftSupport();
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
+
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
+builder.Services.AddSwaggerGenNewtonsoftSupport();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 // global cors policy
 app.UseCors(x => x
     .AllowAnyMethod()

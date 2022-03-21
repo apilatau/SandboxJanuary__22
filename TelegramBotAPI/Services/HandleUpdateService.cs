@@ -4,8 +4,8 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using TelegramBotAPI.Commands;
 using TelegramBotAPI.Controllers;
+using TelegramBotAPI.States;
 
 namespace TelegramBotAPI.Services
 {
@@ -13,17 +13,19 @@ namespace TelegramBotAPI.Services
     {
         private readonly ILogger<HandleUpdateService> _logger;
         private readonly ITelegramBotClient _botClient;
-        private readonly List<BaseCommand> _commands;
-        private BaseCommand _lastCommand;
+        private readonly IStart _start;
+        public IBookingState bookingState { get; set; }
 
         public HandleUpdateService(
             ILogger<HandleUpdateService> logger,
             ITelegramBotClient botClient,
+            IStart start,
             IServiceProvider serviceProvider)
         {
             _logger = logger;
             _botClient = botClient;
-            _commands = serviceProvider.GetServices<BaseCommand>().ToList();
+            _start = start;
+            bookingState = new SelectCity(_botClient);
         }
 
         public async Task Execute(Update update)
@@ -31,6 +33,7 @@ namespace TelegramBotAPI.Services
             var handler = update.Type switch
             {
                 UpdateType.Message => BotOnMessageReceived(update),
+                UpdateType.CallbackQuery => BotOnCallbackQueryReceived(update),
                 _ => UnknownUpdateHandlerAsync(update)
             };
 
@@ -45,56 +48,73 @@ namespace TelegramBotAPI.Services
             }
         }
 
+        private async Task BotOnCallbackQueryReceived(Update update)
+        {
+            if (CheckCity(update.CallbackQuery?.Data))
+            {
+                bookingState = new SelectOffice(_botClient);
+                await StartBooking(update);
+            }
+
+            if (CheckOffice(update.CallbackQuery?.Data))
+            {
+                bookingState = new SelectStartDate(_botClient);
+                await StartBooking(update);
+            }
+        }
+
+        private bool CheckOffice(string? data)
+        {
+            if (data == "Office1")
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool CheckCity(string? data)
+        {
+            if(data == "A")
+            {
+                return true;
+            }
+            return false;
+        }
+
         private async Task BotOnMessageReceived(Update update)
         {
             if (update.Message.Type != MessageType.Text)
                 return;
 
-            //await _botClient.SendTextMessageAsync(
-            //    chatId: update.Message.Chat.Id,
-            //    text: "yoloy yo"
-            //    );
-
             
-           switch (update.Message?.Text)
-           {
-                case "Start Booking":
-                     await ExecuteCommand(CommandNames.StartCommand, update);
-                    //await _botClient.SendTextMessageAsync(
-                    //                    chatId: update.Message.Chat.Id,
-                    //                    text: "in start booking"
-                    //                    );
-                    return;
-                case "Cancel or Change booking":
-                    await ExecuteCommand(CommandNames.ChangeCommand, update);
-                    //await _botClient.SendTextMessageAsync(
-                    //                    chatId: update.Message.Chat.Id,
-                    //                    text: "in chnage booking"
-                    //                    );
-                    return;
-                    
-           }
-
-            if (update.Message != null && update.Message.Text.Contains(CommandNames.StartCommand))
+            //bookingState.IsFinished = true;
+          
+            switch (update.Message?.Text)
             {
-                await ExecuteCommand(CommandNames.StartCommand, update);
-                return;
-            }
+                case "/start":
+                    await _start.Menu(update);
+                    return;
+                case "Start Booking":
+                    await StartBooking(update);                     
+                    return;
 
+            };
+            
+            
         }
 
+
+        private async Task StartBooking(Update update)
+        {
+            
+            await bookingState.ExecuteAsync(update);
+             
+        }
 
         private Task UnknownUpdateHandlerAsync(Update update)
         {
             return Task.CompletedTask;
         }
 
-        private async Task ExecuteCommand(string commandName, Update update)
-        {
-            _lastCommand = _commands.First(x => x.Name == commandName);
-            await _lastCommand.ExecuteAsync(update);
-
-
-        }
     }
 }
