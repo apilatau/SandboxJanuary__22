@@ -4,7 +4,10 @@ namespace BusinessLayer.Interfaces
 {
     public interface IReserveService
     {
-        Task<List<Reserve>> GetAllReserves(int id = default, CancellationToken cancellationToken = default);
+        Task<Reserve> BookByParameters(int userId, int workingDeskId, DateTime startDate, DateTime endDate, DayOfWeek[] selectedDays, int frequency);
+        Task<List<ReserveResponseDto>> GetAllReserves(int id = default, CancellationToken cancellationToken = default);
+        public Task EditBookingForAdminsAsync(int booking_id, Reserve reserve);
+
 
         Task<Reserve> AddAsync(Reserve reserve);
         Task DeleteAsync(Reserve reserve);
@@ -15,5 +18,6 @@ namespace BusinessLayer.Interfaces
 
 
         //  Task<List<ReserveResponseDto>> GetReservesForEachEmployee(List<ReserveResponseDto> reserves, CancellationToken cancellationToken = default);
+        public string TestBot();
     }
 }
