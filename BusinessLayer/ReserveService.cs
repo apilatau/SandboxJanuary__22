@@ -37,6 +37,10 @@ namespace BusinessLayer
 
         public async Task<Reserve> AddAsync(Reserve reserve)
         {
+            if (await reserveRepository.IsAvailable(reserve, reserve.StartDate, reserve.EndDate))
+            {
+                throw new ArgumentException("the desk already reserved");
+            }
             return await reserveRepository.AddAsync(reserve);
         }
         

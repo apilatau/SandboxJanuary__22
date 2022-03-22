@@ -15,31 +15,34 @@ namespace BusinessLayer
 {
     public class OfficeService : IOfficeService
     {
-        private readonly OfficeRepository _officeRepository;
-        private readonly ApplicationDbContext _dbContext;
-        internal DbSet<Office> dbSet;
         private readonly IOfficeRepository officeRepository;
+        private AppSettings _appSettings;
 
-        public OfficeService(ApplicationDbContext dbContext, IOfficeRepository officeRepository)
+
+        public OfficeService(IOfficeRepository officeRepository)
         {
+            _appSettings = new AppSettings();
             this.officeRepository = officeRepository;
-            _dbContext = dbContext;
-            dbSet = _dbContext.Set<Office>();
         }
 
-        public async Task<ResponseBase<OfficeResponseDto>> AddOffice(CreateOfficeDto officeDto)
+        public async Task<Office> AddAsync(Office office)
         {
-            var officeResponse = new ResponseBase<OfficeResponseDto>();
-            var city = await _dbContext.Offices.FirstOrDefaultAsync(u => u.Id == officeDto.CityId);
-            if (city == null) throw new OfficeCustomException("City not found");
-
-            Office newOffice = officeDto.Adapt<Office>();
-            await _officeRepository.AddAsync(newOffice);
-            var officeResponseDto = newOffice.Adapt<OfficeResponseDto>(); // Mapster
-            officeResponse.Data = officeResponseDto;
-
-            return officeResponse;
+            return await officeRepository.AddAsync(office);
         }
+
+        public async Task DeleteAsync(Office office) => await officeRepository.DeleteAsync(office);  
+
+
+        public async Task<Office> GetByIdAsync(int id)
+        {
+            return await officeRepository.GetByIdAsync(id);
+        }
+
+        public async Task<List<Office>> ListAsync()
+        {
+            return await officeRepository.ListAsync();
+        }
+
         public async Task<List<Office>> SearchSpecificOfficePlan(string? name, string? address, int? cityId, int? countryId)
         {
             var predicate = PredicateBuilder.New<Office>(true);
@@ -63,52 +66,7 @@ namespace BusinessLayer
             return data.Where(predicate).ToList();
         }
 
-
-        public Task<ResponseBase<OfficeResponseDto>> DeleteOffice(int id, CancellationToken cancellationToken = default)
-           
-        {
-            throw new NotImplementedException();
-                
-        }
-
-        public async Task<List<OfficeResponseDto>> GetAllOffices(int Cityid = default, CancellationToken cancellationToken = default)
-        {
-            if (Cityid != null)
-            {          
-                List<OfficeResponseDto> offices = await dbSet
-                .Select(m => m.Adapt<OfficeResponseDto>())
-                .Where(m => m.CityId == Cityid)
-                .ToListAsync(cancellationToken);
-                return offices;              
-            }
-            else
-            {             
-                List<OfficeResponseDto> offices = await dbSet
-                .Select(m => m.Adapt<OfficeResponseDto>())
-                .ToListAsync(cancellationToken);
-                return offices;
-            }   
-        }
-
-        public Task<ResponseBase<OfficeResponseDto>> GetOfficeById(int id, CancellationToken cancellationToken = default)
-            
-        {
-            throw new NotImplementedException();
-                
-        }
-
-        public async Task<List<OfficeResponseDto>> GetOfficesForEachCity(List<CityResponseDto> cities, CancellationToken cancellationToken = default)
-        {
-            var officeResponseDtosList = new List<OfficeResponseDto>();
-            foreach (var city in cities)
-            {
-                var offices = await dbSet
-                    .Select(m => m.Adapt<OfficeResponseDto>())
-                    .Where(m => m.CityId == city.CityId)
-                    .ToListAsync(cancellationToken);
-                officeResponseDtosList.AddRange(offices);
-            };
-            return officeResponseDtosList;
-        }
+        public async Task UpdateAsync(Office office) => await officeRepository.UpdateAsync(office);    
+  
     }
 }
