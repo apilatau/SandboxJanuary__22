@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace DataLayer.Migrations
 {
-    public partial class Initial : Migration
+    public partial class inital : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -109,7 +109,7 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "City",
+                name: "Cities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -119,9 +119,9 @@ namespace DataLayer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_City", x => x.Id);
+                    table.PrimaryKey("PK_Cities", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_City_Country_CountryId",
+                        name: "FK_Cities_Country_CountryId",
                         column: x => x.CountryId,
                         principalTable: "Country",
                         principalColumn: "Id",
@@ -209,9 +209,9 @@ namespace DataLayer.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_City_CityId",
+                        name: "FK_Users_Cities_CityId",
                         column: x => x.CityId,
-                        principalTable: "City",
+                        principalTable: "Cities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -314,8 +314,8 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_City_CountryId",
-                table: "City",
+                name: "IX_Cities_CountryId",
+                table: "Cities",
                 column: "CountryId");
 
             migrationBuilder.CreateIndex(
@@ -409,7 +409,7 @@ namespace DataLayer.Migrations
                 name: "WorkingDesks");
 
             migrationBuilder.DropTable(
-                name: "City");
+                name: "Cities");
 
             migrationBuilder.DropTable(
                 name: "Roles");

@@ -23,6 +23,8 @@ namespace TelegramBotAPI.States
 
                     new KeyboardButton("Cancel or Edit Booking")
                 }};
+            
+            markup.ResizeKeyboard = true;
 
             await _botClient.SendTextMessageAsync(
                 chatId: update.Message?.Chat.Id,

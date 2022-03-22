@@ -15,6 +15,7 @@ namespace DataLayer
             services.AddTransient<IWorkingDeskRepository, WorkingDeskRepository>();
             services.AddTransient<IWorkingDeskRepository, WorkingDeskRepository>();
             services.AddTransient<IOfficeRepository, OfficeRepository>();
+            services.AddTransient<ICityRepository, CityRepository>();
         }
     }
 }

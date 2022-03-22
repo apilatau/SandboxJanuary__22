@@ -1,4 +1,5 @@
 using BusinessLayer;
+using BusinessLayer.Interfaces;
 using DataLayer;
 using DataLayer.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -73,6 +74,8 @@ builder.Services.AddScoped<IStart, Start>();
 builder.Services.AddScoped<IBookingState, SelectCity>();
 builder.Services.AddScoped<IBookingState, SelectOffice>();
 builder.Services.AddScoped<IBookingState, SelectStartDate>();
+
+
 
 
 builder.Services.AddSwaggerGen(opt =>

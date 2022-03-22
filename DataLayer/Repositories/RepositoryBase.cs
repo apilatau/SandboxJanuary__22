@@ -74,7 +74,7 @@ namespace DataLayer.Repositories
         /// <returns></returns>
         public async Task<List<T>> ListAsync(CancellationToken cancellationToken = default)
         {
-            return await _dbContext.Set<T>().ToListAsync(cancellationToken);
+            //return await _dbContext.Set<T>().ToListAsync(cancellationToken);
             return await dbSet.ToListAsync(cancellationToken);
         }
 

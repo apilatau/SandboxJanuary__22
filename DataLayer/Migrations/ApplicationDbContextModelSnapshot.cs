@@ -58,7 +58,7 @@ namespace DataLayer.Migrations
 
                     b.HasIndex("CountryId");
 
-                    b.ToTable("City");
+                    b.ToTable("Cities");
                 });
 
             modelBuilder.Entity("DataLayer.Models.Country", b =>
