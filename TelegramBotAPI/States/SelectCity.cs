@@ -26,38 +26,48 @@ namespace TelegramBotAPI.States
         public async Task ExecuteAsync(Update update)
         {
 
-            
+            var cities = await _cityService.GetAllCityNames();
 
-            var cities = await _cityService.GetAllCities();
-            //{
-            //    "moscow", "tashkent", "tbilis"
-            //};
-
-            //var button = new InlineKeyboardButton[citis.Count()][];
-
-            //foreach(var c in citis)
-            //{
-            //    button[0][0] = c;
-            //}
-            var markup = new InlineKeyboardMarkup(
-            new InlineKeyboardButton[][]
+            List<InlineKeyboardButton> buttons = new List<InlineKeyboardButton>();
+            for (int i = 0; i < cities.Count(); i++)
             {
-                new InlineKeyboardButton[]
-                {
-                    InlineKeyboardButton
-                        .WithCallbackData(text: "Tashkent", callbackData: "A"),
+                buttons.Add(new InlineKeyboardButton(cities[i + 1]).ToString()!);
+            }
 
-                    InlineKeyboardButton
-                        .WithCallbackData(text: "bu", callbackData: "B")
-                },
-                new InlineKeyboardButton[]
+            var twoMenu = new List<InlineKeyboardButton[]>();
+            for (var i = 0; i < buttons.Count; i++)
+            {
+                if (buttons.Count - 1 == i)
                 {
-                    InlineKeyboardButton
-                        .WithCallbackData(text: "Warsaw", callbackData: "W"),
-                    InlineKeyboardButton
-                        .WithCallbackData(text: "Moscow", callbackData: "M")
+                    twoMenu.Add(new[] { buttons[i] });
                 }
-            });
+                else
+                    twoMenu.Add(new[] { buttons[i], buttons[i + 1] });
+                i++;
+            }
+
+            var markup = new InlineKeyboardMarkup(twoMenu.ToArray());
+
+            //var markup = new InlineKeyboardMarkup(
+            //new InlineKeyboardButton[][]
+            //{
+
+            //    new InlineKeyboardButton[]
+            //    {
+            //        InlineKeyboardButton
+            //            .WithCallbackData(text: "Tashkent", callbackData: "A"),
+
+            //        InlineKeyboardButton
+            //            .WithCallbackData(text: "bu", callbackData: "B")
+            //    },
+            //    new InlineKeyboardButton[]
+            //    {
+            //        InlineKeyboardButton
+            //            .WithCallbackData(text: "Warsaw", callbackData: "W"),
+            //        InlineKeyboardButton
+            //            .WithCallbackData(text: "Moscow", callbackData: "M")
+            //    }
+            //});
             await _botClient.SendTextMessageAsync(
                 chatId: update.Message!.Chat.Id,
                 text: "Available cities:",

@@ -36,6 +36,13 @@ namespace BusinessLayer
             return await _cityRepository.ListAsync();
         }
 
+        public async Task<List<string>> GetAllCityNames(CancellationToken cancellationToken = default)
+        {
+            var cities = await _cityRepository.ListAsync();
+            var cityNames = cities.Select(x => x.Name).ToList();
+            return cityNames;
+        }
+
 
 
 
