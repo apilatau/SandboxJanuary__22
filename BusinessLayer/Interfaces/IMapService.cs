@@ -1,6 +1,4 @@
-﻿using DataLayer.Dto.MapDto;
-using DataLayer.Dtos.OfficeDto;
-using DataLayer.Models;
+﻿using DataLayer.Models;
 using DataLayer.Responses;
 
 namespace BusinessLayer.Interfaces

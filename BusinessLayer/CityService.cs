@@ -1,7 +1,6 @@
 ﻿using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
 using DataLayer.Data;
-using DataLayer.Dtos.CityDto;
 using DataLayer.Models;
 using DataLayer.Repositories;
 using DataLayer.Responses;

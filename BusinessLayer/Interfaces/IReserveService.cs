@@ -1,11 +1,10 @@
-﻿using DataLayer.Dtos.ReserveDto;
-using DataLayer.Models;
+﻿using DataLayer.Models;
 
 namespace BusinessLayer.Interfaces
 {
     public interface IReserveService
     {
-        Task<List<ReserveResponseDto>> GetAllReserves(int id = default, CancellationToken cancellationToken = default);
+        Task<List<Reserve>> GetAllReserves(int id = default, CancellationToken cancellationToken = default);
 
         Task<Reserve> AddAsync(Reserve reserve);
         Task DeleteAsync(Reserve reserve);
