@@ -12,21 +12,21 @@ namespace TelegramBotAPI.States
     public class SelectCity : IBookingState
     {
         private readonly ITelegramBotClient _botClient;
-        public IBookingState bookingState { get; set; }
-        private readonly ICityService _cityService;
+        private readonly IStateService _stateService;
 
 
-        public SelectCity(ITelegramBotClient botClient, ICityService cityService)
+        public SelectCity(ITelegramBotClient botClient, IStateService stateService)
         {
             _botClient = botClient;
-            _cityService = cityService;
+            _stateService = stateService;
 
         }
        
         public async Task ExecuteAsync(Update update)
         {
 
-            var cities = await _cityService.GetAllCityNames();
+            var state = (await _stateService.CurrentListOfStates()).LastOrDefault();
+            state!.level = 1;
 
             var markup = new InlineKeyboardMarkup(
             new InlineKeyboardButton[][]
@@ -35,25 +35,28 @@ namespace TelegramBotAPI.States
                 new InlineKeyboardButton[]
                 {
                     InlineKeyboardButton
-                        .WithCallbackData(text: "Tashkent", callbackData: "T"),
+                        .WithCallbackData(text: "Tashkent", callbackData: "Tashkent"),
 
                     InlineKeyboardButton
-                        .WithCallbackData(text: "Tbilisi", callbackData: "T")
+                        .WithCallbackData(text: "Tbilisi", callbackData: "Tbilisi")
                 },
                 new InlineKeyboardButton[]
                 {
                     InlineKeyboardButton
-                        .WithCallbackData(text: "Warsaw", callbackData: "W"),
+                        .WithCallbackData(text: "Warsaw", callbackData: "Warsaw"),
                     InlineKeyboardButton
-                        .WithCallbackData(text: "Moscow", callbackData: "M")
+                        .WithCallbackData(text: "Moscow", callbackData: "Moscow")
                 }
             });
+            
+            state.cityName = update.CallbackQuery!.Data;
+
             await _botClient.SendTextMessageAsync(
                 chatId: update.Message!.Chat.Id,
                 text: "Available cities:",
                 replyMarkup: markup);
-                
- 
+
+
         }
         
     }

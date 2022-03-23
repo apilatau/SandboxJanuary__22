@@ -7,7 +7,6 @@ namespace TelegramBotAPI.States
     {
         private readonly ITelegramBotClient _botClient;
 
-        public bool IsFinished { get; set; }
         public SelectStartDate(ITelegramBotClient botClient)
         {
             _botClient = botClient;
@@ -15,7 +14,7 @@ namespace TelegramBotAPI.States
         public async Task ExecuteAsync(Update update)
         {
             await _botClient.SendTextMessageAsync(
-                chatId: update.CallbackQuery!.Message!.Chat.Id,
+                chatId: update.Message!.Chat.Id,
                 text: "Available dates");
         
         }

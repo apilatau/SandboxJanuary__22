@@ -10,8 +10,8 @@ namespace DataLayer.Models
     {
         public Int64? OwnerTelegramId { get; set; }
         public Int64? TargetTelegramId { get; set; }
-        public City?  cityId { get; set; }
-        public Office? officeId { get; set; }
+        public string?  cityName { get; set; }
+        public string? officeName { get; set; }
         public int? WorkingDeskNumber { get; set; }
         public string? startDay { get; set; }
         public string? startMonth { get; set; }

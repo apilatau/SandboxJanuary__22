@@ -17,6 +17,7 @@ namespace DataLayer
             services.AddTransient<IOfficeRepository, OfficeRepository>();
             services.AddTransient<ICityRepository, CityRepository>();
             services.AddTransient<IMapRepository, MapRepository>();
+            services.AddTransient<IStateRepository, StateRepository>();
 
         }
     }

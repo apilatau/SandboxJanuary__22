@@ -1,5 +1,6 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TelegramBotAPI.Services
 {
@@ -28,9 +29,19 @@ namespace TelegramBotAPI.Services
 
             _logger.LogInformation("Setting webhook");
 
+            ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup("Please press button to start:");
+            markup.Keyboard = new KeyboardButton[][] {
+                new KeyboardButton[]
+                {
+                    new KeyboardButton("/start"),
+                }};
+
+            markup.ResizeKeyboard = true;
+
             await botClient.SendTextMessageAsync(
                 chatId: 1678231744,
-                text: "Bot has started working!");
+                text: "Bot has started working!",
+                replyMarkup: markup);
 
             await botClient.SetWebhookAsync(
                 url: webhookAddress,

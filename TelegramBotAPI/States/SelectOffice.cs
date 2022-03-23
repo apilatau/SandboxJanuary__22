@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using BusinessLayer.Interfaces;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -7,16 +8,18 @@ namespace TelegramBotAPI.States
     public class SelectOffice : IBookingState
     {
         private readonly ITelegramBotClient _botClient;
-
-        public SelectOffice(ITelegramBotClient botClient)
+        private readonly IStateService _stateService;
+        public SelectOffice(ITelegramBotClient botClient, IStateService stateService)
         {
             _botClient = botClient;
+            _stateService = stateService;
         }
 
-        public bool IsFinished { get; set; }
 
         public async Task ExecuteAsync(Update update)
         {
+            var state = (await _stateService.CurrentListOfStates()).LastOrDefault();
+            state!.level = 2;
             var markup = new InlineKeyboardMarkup(
             new InlineKeyboardButton[][]
             {
@@ -39,7 +42,7 @@ namespace TelegramBotAPI.States
             });
 
             await _botClient.SendTextMessageAsync(
-                   chatId: update.CallbackQuery!.Message!.Chat.Id,
+                   chatId: update.CallbackQuery.Message!.Chat.Id,
                    text: "Available Offices:",
                    replyMarkup: markup);
         }

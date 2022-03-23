@@ -15,28 +15,21 @@ namespace TelegramBotAPI.Services
         private readonly ILogger<HandleUpdateService> _logger;
         private readonly ITelegramBotClient _botClient;
         private readonly IStart _start;
+        private readonly IStateService _stateService;
         public IBookingState bookingState { get; set; }
-
+       
         public HandleUpdateService(
             ILogger<HandleUpdateService> logger,
             ITelegramBotClient botClient,
             IStart start,
-            IServiceProvider serviceProvider, 
-            ICityService cityService)
+            IServiceProvider serviceProvider,
+            IStateService stateService)
         {
             _logger = logger;
             _botClient = botClient;
             _start = start;
-
-            try
-            {
-                bookingState = new SelectCity(_botClient, cityService);
-            }
-            catch (Exception)
-            {
-
-                throw;
-            } 
+            _stateService = stateService;
+            bookingState = new SelectCity(_botClient, _stateService);
         }
 
         public async Task Execute(Update update)
@@ -58,20 +51,20 @@ namespace TelegramBotAPI.Services
                 throw e;
             }
         }
-
         private async Task BotOnCallbackQueryReceived(Update update)
         {
-            if (CheckCity(update.CallbackQuery?.Data))
-            {
-                bookingState = new SelectOffice(_botClient);
-                await StartBooking(update);
-            }
+            await StartBooking(update);
+            //if (CheckCity(update.CallbackQuery?.Data))
+            //{
+            //    bookingState = new SelectOffice(_botClient);
+            //    await StartBooking(update);
+            //}
 
-            if (CheckOffice(update.CallbackQuery?.Data))
-            {
-                bookingState = new SelectStartDate(_botClient);
-                await StartBooking(update);
-            }
+            //if (CheckOffice(update.CallbackQuery?.Data))
+            //{
+            //    bookingState = new SelectStartDate(_botClient);
+            //    await StartBooking(update);
+            //}
         }
 
         private bool CheckOffice(string? data)
@@ -96,9 +89,6 @@ namespace TelegramBotAPI.Services
         {
             if (update.Message.Type != MessageType.Text)
                 return;
-
-            
-            //bookingState.IsFinished = true;
           
             switch (update.Message?.Text)
             {
@@ -114,12 +104,23 @@ namespace TelegramBotAPI.Services
             
         }
 
-
         private async Task StartBooking(Update update)
         {
-            
             await bookingState.ExecuteAsync(update);
-             
+            //var state = (await _stateService.CurrentListOfStates()).LastOrDefault();
+
+            //if(state.level == 0)
+            //{
+            //    bookingState = new SelectCity(_botClient, _stateService);
+            //    await bookingState.ExecuteAsync(update);
+            //}
+            //else if(state.level == 1){
+            //    bookingState = new SelectOffice(_botClient, _stateService);
+            //    await bookingState.ExecuteAsync(update);
+            //}
+
+
+
         }
 
         private Task UnknownUpdateHandlerAsync(Update update)

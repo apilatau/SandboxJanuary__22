@@ -15,6 +15,7 @@ namespace BusinessLayer
             Services.AddScoped<IOfficeService, OfficeService>();
             Services.AddScoped<IRoleService, RoleService>();
             Services.AddScoped<ICityService, CityService>();
+            Services.AddScoped<IStateService, StateService>();
         }
     }
 }
