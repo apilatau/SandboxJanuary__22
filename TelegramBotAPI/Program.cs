@@ -1,6 +1,9 @@
 using BusinessLayer;
 using DataLayer;
 using DataLayer.Data;
+using Hangfire;
+using Hangfire.SqlServer;
+using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +13,9 @@ using System.Reflection;
 using System.Text;
 using Telegram.Bot;
 using TelegramBotAPI.Services;
+using BusinessLayer;
+using TelegramBotAPI.Controllers;
+using BusinessLayer.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,9 +64,18 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+
+builder.Services.AddHangfire(config =>
+    config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseDefaultTypeSerializer()
+    .UseMemoryStorage());
+
+builder.Services.AddHangfireServer();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddHostedService<ConfigureWebHook>();
+//builder.Services.AddHostedService<ConfigureWebHook>();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
             new TelegramBotClient("5120059284:AAEW1xdREZG09BSV5akzkZaifa_nEUJOr48", httpClient));
@@ -117,7 +132,11 @@ builder.Services.AddSwaggerGen(opt =>
 });
 builder.Services.AddSwaggerGenNewtonsoftSupport();
 
+
 var app = builder.Build();
+
+app.UseHangfireDashboard();
+app.UseHangfireServer();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
