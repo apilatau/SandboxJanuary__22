@@ -14,18 +14,7 @@ namespace BusinessLayer
 
         public ReserveService(ApplicationDbContext dbContext, IReserveRepository reserveRepository)
         {
-            this.reserveRepository = reserveRepository;
         }
-
-        public async Task<List<Reserve>> GetAllReserves(int id, CancellationToken cancellationToken = default)
-        {
-
-            var list = await reserveRepository.ListAsync();
-
-
-            return list.Where(x => x.Id == id).ToList();
-        }
-
         public async Task<Reserve> AddAsync(Reserve reserve)
         {
             if (await reserveRepository.IsAvailable(reserve, reserve.StartDate, reserve.EndDate))
@@ -168,3 +157,13 @@ namespace BusinessLayer
     }
 }
 
+
+
+//public async Task<List<ReserveResponseDto>> GetAllReserves(int id, CancellationToken cancellationToken = default)
+//{
+//    List<ReserveResponseDto> reserves = await dbSet
+//        .Select(m => m.Adapt<ReserveResponseDto>())
+//        .Where(m => m.UserId == id)
+//        .ToListAsync(cancellationToken);
+//    return reserves;
+//}

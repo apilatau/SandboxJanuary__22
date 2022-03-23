@@ -21,50 +21,35 @@ namespace BusinessLayer
         {
             _appSettings = new AppSettings();
             this.officeRepository = officeRepository;
-        }
 
-        public async Task<Office> AddAsync(Office office)
-        {
-            return await officeRepository.AddAsync(office);
-        }
-
-        public async Task DeleteAsync(Office office) => await officeRepository.DeleteAsync(office);  
-
-
-        public async Task<Office> GetByIdAsync(int id)
-        {
-            return await officeRepository.GetByIdAsync(id);
-        }
-
-        public async Task<List<Office>> ListAsync()
-        {
-            return await officeRepository.ListAsync();
-        }
-
-        public async Task<List<Office>> SearchSpecificOfficePlan(string? name, string? address, int? cityId, int? countryId)
-        {
-            var predicate = PredicateBuilder.New<Office>(true);
-            if (name != null)
-            {
-                predicate = predicate.And(i => i.Name.ToLower().Contains(name.ToLower()));
-            }
-            if (address != null)
-            {
-                predicate = predicate.And(i => i.Address.ToLower().Contains(address.ToLower()));
-            }
-            if (cityId != null)
-            {
-                predicate = predicate.And(i => i.CityId.ToString().ToLower() == cityId.ToString().ToLower());
-            }
-            if (countryId != null)
-            {
-                predicate = predicate.And(i => i.CountryId.ToString().ToLower() == countryId.ToString().ToLower());
-            }
-            var data = await officeRepository.ListAsync();
-            return data.Where(predicate).ToList();
-        }
-
-        public async Task UpdateAsync(Office office) => await officeRepository.UpdateAsync(office);    
-  
     }
 }
+
+
+//public async Task<ResponseBase<OfficeResponseDto>> AddOffice(CreateOfficeDto officeDto)
+//{
+//    var officeResponse = new ResponseBase<OfficeResponseDto>();
+//    var city = await _dbContext.Offices.FirstOrDefaultAsync(u => u.Id == officeDto.CityId);
+//    if (city == null) throw new OfficeCustomException("City not found");
+
+//    Office newOffice = officeDto.Adapt<Office>();
+//    await _officeRepository.AddAsync(newOffice);
+//    var officeResponseDto = newOffice.Adapt<OfficeResponseDto>(); // Mapster
+//    officeResponse.Data = officeResponseDto;
+
+//    return officeResponse;
+//}
+
+//public async Task<List<OfficeResponseDto>> GetOfficesForEachCity(List<CityResponseDto> cities, CancellationToken cancellationToken = default)
+//{
+//    var officeResponseDtosList = new List<OfficeResponseDto>();
+//    foreach (var city in cities)
+//    {
+//        var offices = await dbSet
+//            .Select(m => m.Adapt<OfficeResponseDto>())
+//            .Where(m => m.CityId == city.CityId)
+//            .ToListAsync(cancellationToken);
+//        officeResponseDtosList.AddRange(offices);
+//    };
+//    return officeResponseDtosList;
+//}

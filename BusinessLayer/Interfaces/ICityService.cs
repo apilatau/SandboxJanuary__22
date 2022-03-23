@@ -1,16 +1,17 @@
 ﻿using DataLayer.Dtos.CityDto;
+using DataLayer.Models;
 using DataLayer.Responses;
 
 namespace BusinessLayer.Interfaces
 {
     public interface ICityService
     {
-        Task<List<CityResponseDto>> GetAllCities(int id = default, CancellationToken cancellationToken = default);
+        Task<List<City>> GetAllCities(int id = default);
 
-        Task<ResponseBase<CreateCityDto>> DeleteCity(int id, CancellationToken cancellationToken = default);
+        Task<int> DeleteCity(int id);
 
-        Task<ResponseBase<CityResponseDto>> AddCity(CreateCityDto cityDto);
+        Task<int> AddCity(City city);
 
-        Task<ResponseBase<CreateCityDto>> GetCityById(int id, CancellationToken cancellationToken = default);
+        Task<City> GetCityById(int id);
     }
 }
