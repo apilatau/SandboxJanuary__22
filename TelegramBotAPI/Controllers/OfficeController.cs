@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interfaces;
 using DataLayer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TelegramBotAPI.Controllers
@@ -24,5 +25,25 @@ namespace TelegramBotAPI.Controllers
             return await officeService.SearchSpecificOfficePlan(name, address, cityId, countryId);
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Map Editor")]
+        public async Task<Office> AddOffice(Office office)
+        {
+            return await officeService.AddAsync(office);
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Map Editor")]
+        public async Task UpdateOffice(Office office) => await officeService.UpdateAsync(office);
+
+        [HttpDelete]
+        [Authorize(Roles = "Map Editor")]
+        public async Task DeleteOffice(Office office) => await officeService.DeleteAsync(office);
+
+        [HttpGet("getall")]
+        public async Task<List<Office>> ListAsync()
+        {
+            return await officeService.ListAsync();
+        }
     }
 }

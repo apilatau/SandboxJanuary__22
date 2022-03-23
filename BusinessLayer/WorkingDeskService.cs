@@ -53,7 +53,7 @@ namespace BusinessLayer
             var predicate = PredicateBuilder.New<WorkingDesk>(true);
             if (mapId != null)
             {
-                predicate = predicate.And(i => i.MapId.ToString().ToLower().Contains(mapId.ToString().ToLower()));
+               predicate = predicate.And(i => i.MapId.ToString().ToLower().Contains(mapId.ToString().ToLower()));
             }
             if (deskTypeId != null)
             {

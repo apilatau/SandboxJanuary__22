@@ -1,8 +1,6 @@
 ﻿using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
 using DataLayer.Data;
-using DataLayer.Dtos.CityDto;
-using DataLayer.Dtos.OfficeDto;
 using DataLayer.IRepositories;
 using DataLayer.Models;
 using DataLayer.Repositories;
@@ -15,44 +13,15 @@ namespace BusinessLayer
 {
     public class OfficeService : IOfficeService
     {
-        private readonly IOfficeRepository _officeRepository;
-        private readonly ApplicationDbContext _dbContext;
-        internal DbSet<Office> dbSet;
         private readonly IOfficeRepository officeRepository;
+        private AppSettings _appSettings;
 
-        public OfficeService(ApplicationDbContext dbContext, IOfficeRepository officeRepository)
+
+        public OfficeService(IOfficeRepository officeRepository)
         {
+            _appSettings = new AppSettings();
             this.officeRepository = officeRepository;
-            _dbContext = dbContext;
-            dbSet = _dbContext.Set<Office>();
-            _officeRepository = officeRepository;
-        }
 
-        public async Task<int> AddOffice(Office office)
-        {
-            var city = await _dbContext.Cities.FirstOrDefaultAsync(u => u.Id == office.CityId);
-            if (city == null) throw new OfficeCustomException("City not found");
-            await _officeRepository.AddAsync(office);
-            await _officeRepository.SaveChangesAsync();
-        }
-
-        public async Task<int> DeleteOffice(int id)
-        {
-
-        }
-
-        public async Task<List<Office>> GetOfficesForEachCity(List<City> cities)
-        {
-            var offices = new List<Office>();
-            foreach (var city in cities)
-            {
-                var officesofEachCity = dbSet
-                    .Select(m => m)
-                    .Where(m => m.CityId == city.Id);
-                offices.AddRange(officesofEachCity);
-            };
-            return offices;
-        }
     }
 }
 

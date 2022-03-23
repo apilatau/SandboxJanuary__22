@@ -1,7 +1,6 @@
 ﻿using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
 using DataLayer.Data;
-using DataLayer.IRepositories;
 using DataLayer.Models;
 using DataLayer.Repositories;
 using Microsoft.EntityFrameworkCore;
