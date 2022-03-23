@@ -13,32 +13,26 @@ namespace TelegramBotAPI.Controllers
     [Route("api/bot")]
     public class BotController : ControllerBase
     {
-        private readonly IRoleService roleService;
         private readonly IUserService userService;
         private readonly IStateService stateService;
         private readonly ApplicationDbContext applicationdbcontext;
         private readonly IReserveService reserveService;
-        private readonly ICityService cityService;
 
-        public BotController(IRoleService roleService, IUserService userService, IStateService stateService, ApplicationDbContext applicationdbcontext, IReserveService reserveService)
+        public BotController(IUserService userService, IStateService stateService, ApplicationDbContext applicationdbcontext, IReserveService reserveService)
         {
-            this.roleService = roleService;
             this.userService = userService;
             this.stateService = stateService;
             this.applicationdbcontext = applicationdbcontext;
             this.reserveService = reserveService;
-            this.cityService = cityService;
         }
 
         [HttpGet("getallusers")]
-
         public async Task<List<Userr>> GetUsers()
         {
             return await userService.ListAsync();
         }
 
         [HttpGet("getallcitis")]
-
         public List<City> getcities()
         {
             return applicationdbcontext.Cities.ToList();
@@ -46,7 +40,6 @@ namespace TelegramBotAPI.Controllers
 
 
         [HttpGet("getalldesks")]
-
         public List<WorkingDesk> getalldesks()
         {
             return applicationdbcontext.WorkingDesks.ToList();
@@ -54,272 +47,249 @@ namespace TelegramBotAPI.Controllers
 
 
         [HttpGet("getallofficies")]
-
         public List<Office> officies()
         {
             return applicationdbcontext.Offices.ToList();
         }
 
 
-
         [HttpPost]
-
         public async Task<IActionResult> Post([FromBody] Update update)
         {
             string message;
-            Int64 curruser;
+            Int64 CurrentUserId;
             var usersinstate = stateService.CurrentListOfStates().Result.Select(x => x.OwnerTelegramId).ToList();
             //return Ok();
-            var users = await GetUsers();
 
             TelegramBotClient client = new TelegramBotClient("5293359107:AAGfzC1GBMkLHzqy1enu4dbBHEvHqJ5Iq78");
 
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
             {
                 message = update.Message.Text.ToLower();
-                curruser = update.Message.Chat.Id;
+                CurrentUserId = update.Message.Chat.Id;
 
-                if (!usersinstate.Contains(curruser))
+                var userId = (await GetUsers()).FirstOrDefault(x => x.TelegramId == CurrentUserId).Id;
+
+                if (userId != null)
+                {
+                    var reserve = (await reserveService.ListAsync()).FirstOrDefault(x => x.UserrId == userId);
+
+                    if (reserve != null && message != "yes")
+                    {
+                        await client.SendTextMessageAsync(CurrentUserId, $"Cancel Your Booking, starting at: {reserve.StartDate.ToShortDateString()}", replyMarkup: CancelButtons());
+                        return Ok();
+                    }
+                }
+
+                if (!usersinstate.Contains(CurrentUserId))
                 {
                     var state2 = new State() { OwnerTelegramId = update.Message.Chat.Id, Level = 1 };
                     await stateService.AddAsync(state2);
-                    await client.SendTextMessageAsync(curruser, "please enter starting day 1 from to 31", replyMarkup: inreply());
+
+                    await client.SendTextMessageAsync(CurrentUserId, "please enter starting day 1 from to 31", replyMarkup: inreply());
                     return Ok();
                 }
+                
             }
             else
             {
                 message = update.CallbackQuery.Data.ToLower();
-                curruser = update.CallbackQuery.From.Id;
+                CurrentUserId = update.CallbackQuery.From.Id;
+                var userId = (await GetUsers()).FirstOrDefault(x => x.TelegramId == CurrentUserId).Id;
 
-                if (!usersinstate.Contains(curruser))
+                if (userId != null)
                 {
-                    var state2 = new State() { OwnerTelegramId = update.Message.Chat.Id, Level = 1 };
+                    var reserve = (await reserveService.ListAsync()).FirstOrDefault(x => x.UserrId == userId);
+
+                    if (reserve != null && message != "yes")
+                    {
+                        await client.SendTextMessageAsync(CurrentUserId, $"Cancel Your Booking, starting at: {reserve.StartDate.ToShortDateString()}", replyMarkup: CancelButtons());
+                        return Ok();
+                    }
+                    if (message == "yes")
+                    {
+                        await reserveService.DeleteAsync(reserve);
+
+                        await client.SendTextMessageAsync(CurrentUserId, "u deleted booking, if u want new one, choose from 1 to 31", replyMarkup: inreply());
+                        return Ok();
+                    }
+                }
+
+                if (!usersinstate.Contains(CurrentUserId))
+                {
+                    var state2 = new State() { OwnerTelegramId = CurrentUserId, Level = 1 };
                     await stateService.AddAsync(state2);
-                    await client.SendTextMessageAsync(curruser, "please enter starting day 1 from to 31", replyMarkup: inreply());
+
+                   
+
+                    await client.SendTextMessageAsync(CurrentUserId, "please enter starting day 1 from to 31", replyMarkup: inreply());
                     return Ok();
                 }
             }
-
-
-            int level = 0;
 
             var lvlobject = (await stateService.CurrentListOfStates()).LastOrDefault();
-            level = lvlobject.Level;
+            int level = lvlobject.Level;
 
-
-
-            if (true) //usersinstate.Contains(curruser)
+            if (level == 2)
             {
-
-                if (level == 2)
+                if (char.IsNumber(message[0]))
                 {
-                    if (char.IsNumber(message[0]))
-                    {
+                    var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == CurrentUserId);
+                    await client.SendTextMessageAsync(CurrentUserId, "please choose ending day 1 from to 31", replyMarkup: inreply());
+                    state.startmonth = message;
+                    state.Level = 3;
 
-                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
-                        await client.SendTextMessageAsync(curruser, "please choose ending day 1 from to 31", replyMarkup: inreply());
-                        state.startmonth = message;
-                        state.Level = 3;
-
-                        await stateService.UpdateAsync(state);
-                        return Ok();
-                    }
-                    else
-                    {
-
-                        //await client.SendTextMessageAsync(update.Message.From.Id, "please choose end date", replyMarkup: getdatebuttons2());
-                        await client.SendTextMessageAsync(curruser, "please use buttons");
-                        return Ok();
-
-                    }
-                }
-
-                else if (level == 3)
-                {
-
-                    if (message.Length <= 2 && char.IsNumber(message[0]))
-                    {
-
-                        Int64 id = update.CallbackQuery.From.Id;
-
-                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
-                        state.enday = message;
-                        state.Level = 4;
-
-                        await stateService.UpdateAsync(state);
-                        await client.SendTextMessageAsync(curruser, "please choose ending Month", replyMarkup: MonthL());
-                        return Ok();
-                    }
-                    await client.SendTextMessageAsync(curruser, "please use buttons");
+                    await stateService.UpdateAsync(state);
                     return Ok();
-
                 }
-                else if (level == 4)
+                return await WrongUsage(CurrentUserId, client);
+            }
+            else if (level == 3)
+            {
+                if (message.Length <= 2 && char.IsNumber(message[0]))
                 {
-                    if (char.IsNumber(message[0]))
-                    {
+                    var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == CurrentUserId);
+                    await client.SendTextMessageAsync(CurrentUserId, "please choose ending Month", replyMarkup: MonthL());
 
-                        await client.SendTextMessageAsync(curruser, "Please Choose Cities", replyMarkup: getcitiess());
-                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
+                    state.enday = message;
+                    state.Level = 4;
+                    await stateService.UpdateAsync(state);
 
-                        state.endmonth = message;
-                        state.Level = 5;
-
-                        await stateService.UpdateAsync(state);
-                        return Ok();
-                    }
-                    else
-                    {
-                        await client.SendTextMessageAsync(curruser, "please use buttons");
-                        return Ok();
-
-                    }
+                    return Ok();
                 }
-
-                else if (level == 5)
+                return await WrongUsage(CurrentUserId, client);
+            }
+            else if (level == 4)
+            {
+                if (char.IsNumber(message[0]))
                 {
-                    if (char.IsNumber(message[0]))
-                    {
+                    await client.SendTextMessageAsync(CurrentUserId, "Please Choose Cities", replyMarkup: GetCities());
+                    var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == CurrentUserId);
 
-                        await client.SendTextMessageAsync(curruser, $"Select Offices:", replyMarkup: getofficies());
-                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
+                    state.endmonth = message;
+                    state.Level = 5;
+                    await stateService.UpdateAsync(state);
 
-                        state.CityNumb = int.Parse(message);
-                        state.Level = 6;
-
-                        await stateService.UpdateAsync(state);
-                        return Ok();
-                    }
-                    else
-                    {
-                        await client.SendTextMessageAsync(curruser, "please use buttons");
-                        return Ok();
-
-                    }
+                    return Ok();
                 }
-
-                else if (level == 6)
+                return await WrongUsage(CurrentUserId, client);
+            }
+            else if (level == 5)
+            {
+                if (char.IsNumber(message[0]))
                 {
-                    if (char.IsNumber(message[0]))
-                    {
-                        StringBuilder sb = new StringBuilder();
+                    await client.SendTextMessageAsync(CurrentUserId, $"Select Offices:", replyMarkup: GetOffices());
+                    var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == CurrentUserId);
 
-                        var offices = getalldesks();
-                        sb.AppendLine("please choose Workingdesk");
-                        for (int i = 0; i < getalldesks().Count; i++)
-                        {
-                            sb.Append($" N: { offices.ElementAt(i).Id}");
-                            sb.Append($" hasPC: { offices.ElementAt(i).HasComputer}");
-                            sb.AppendLine($" hasWindow: { offices.ElementAt(i).NextToWindow}");
-                        }
-                        await client.SendTextMessageAsync(curruser, $"{sb}", replyMarkup: getworkingdesks());
+                    state.CityNumb = int.Parse(message);
+                    state.Level = 6;
+                    await stateService.UpdateAsync(state);
 
-                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
-                        //DateTime datestart = new DateTime(int.Parse(state.Startday), int.Parse(state.startmonth), DateTime.Now.Year);
-                        DateTime datestart = DateTime.Now;
-
-                        state.OfficeNumb = int.Parse(message);
-                        state.Level = 7;
-
-                        await stateService.UpdateAsync(state);
-
-
-                        return Ok();
-                    }
-                    else
-                    {
-                        await client.SendTextMessageAsync(curruser, "please use buttons");
-                        return Ok();
-
-                    }
+                    return Ok();
                 }
-
-                else if (level == 7)
+                return await WrongUsage(CurrentUserId, client);
+            }
+            else if (level == 6)
+            {
+                if (char.IsNumber(message[0]))
                 {
-                    if (char.IsNumber(message[0]))
+                    StringBuilder workingDesks = new StringBuilder();
+
+                    var offices = getalldesks();
+                    workingDesks.AppendLine("please choose Workingdesk");
+                    for (int i = 0; i < getalldesks().Count; i++)
                     {
-                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
+                        workingDesks.Append($" N: { offices.ElementAt(i).Id}");
+                        workingDesks.Append($" hasPC: { offices.ElementAt(i).HasComputer}");
+                        workingDesks.AppendLine($" hasWindow: { offices.ElementAt(i).NextToWindow}");
+                    }
 
-                        state.WorkingDeskNumb = int.Parse(message);
-                        state.Level = 8;
+                    await client.SendTextMessageAsync(CurrentUserId, $"{workingDesks}", replyMarkup: GetWorkingDesks());
+                    var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == CurrentUserId);
 
-                        await stateService.UpdateAsync(state);
+                    //DateTime datestart = new DateTime(int.Parse(state.Startday), int.Parse(state.startmonth), DateTime.Now.Year);
+                    DateTime datestart = DateTime.Now;
 
-                        var userId = (await GetUsers()).FirstOrDefault(x => x.TelegramId == curruser).Id;
+                    state.OfficeNumb = int.Parse(message);
+                    state.Level = 7;
+                    await stateService.UpdateAsync(state);
 
-                        DateTime datestart = DateTime.UtcNow;//new DateTime(int.Parse(state.Startday), int.Parse(state.startmonth), DateTime.Now.Year);
-                        DateTime dateend = DateTime.UtcNow;// new DateTime(int.Parse(state.enday), int.Parse(state.endmonth), DateTime.Now.Year);
+                    return Ok();
+                }
+                return await WrongUsage(CurrentUserId, client);
+            }
+            else if (level == 7)
+            {
+                if (char.IsNumber(message[0]))
+                {
+                    var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == CurrentUserId);
 
-                        var reserve = new Reserve
-                        {
-                            UserrId = userId,
-                            StartDate = datestart,
-                            EndDate = dateend,
-                            WorkingDeskId = state.WorkingDeskNumb.Value,
-                            IsReccuring = false,
-                            Frequency = 0,
-                            OfficeId = state.OfficeNumb.Value,
-                            BookingTypeId = 2
-                        };
+                    DateTime startDate = new DateTime(DateTime.UtcNow.Year, int.Parse(state.startmonth), int.Parse(state.Startday));
+                    DateTime endDate = new DateTime(DateTime.UtcNow.Year, int.Parse(state.endmonth), int.Parse(state.enday));
+                    var userId = (await GetUsers()).FirstOrDefault(x => x.TelegramId == CurrentUserId).Id;
 
+                    startDate = DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
+                    endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
+
+                    var reserve = new Reserve
+                    {
+                        UserrId = userId,
+                        StartDate = startDate,
+                        EndDate = endDate,
+                        WorkingDeskId = int.Parse(message),
+                        IsReccuring = false,
+                        Frequency = 0,
+                        OfficeId = state.OfficeNumb.Value,
+                        BookingTypeId = 2
+                    };
+
+                    try
+                    {
                         await reserveService.AddAsync(reserve);
 
+                        await stateService.DeleteAsync(state);
 
-                        await client.SendTextMessageAsync(curruser, "you succesfully reserved");
-                        return Ok();
+                        await client.SendTextMessageAsync(CurrentUserId, "you succesfully reserved place");
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        await client.SendTextMessageAsync(curruser, "please use buttons");
-                        return Ok();
-
-                    }
-                }
-                else if (level == 1)
-                {
-                    if (message.Length <= 2 && char.IsNumber(message[0]))
-                    {
-                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
-                        state.Startday = message;
-                        state.Level = 2;
-
-                        await stateService.UpdateAsync(state);
-                        await client.SendTextMessageAsync(curruser, "please choose staring Month", replyMarkup: MonthF());
-                        return Ok();
+                        await client.SendTextMessageAsync(CurrentUserId, "Error occured during reservation");
                     }
 
-
-                    await client.SendTextMessageAsync(curruser, "please enter starting day 1 from to 30");
                     return Ok();
                 }
-                else
-                {
-                    var state2 = new State() { OwnerTelegramId = update.Message.Chat.Id, Level = 1 };
-                    await stateService.AddAsync(state2);
-                    await client.SendTextMessageAsync(curruser, "please enter starting day 1 from to 31", replyMarkup: inreply());
-                    return Ok();
-                }
+                return await WrongUsage(CurrentUserId, client);
             }
+            else if (level == 1)
+            {
+                if (message.Length <= 2 && char.IsNumber(message[0]))
+                {
+                    var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == CurrentUserId);
+                    state.Startday = message;
+                    state.Level = 2;
 
-
+                    await stateService.UpdateAsync(state);
+                    await client.SendTextMessageAsync(CurrentUserId, "please choose staring Month", replyMarkup: MonthF());
+                    return Ok();
+                }
+                return await WrongUsage(CurrentUserId, client);
+            }
+            else
+            {
+                var currentState = new State() { OwnerTelegramId = update.Message.Chat.Id, Level = 1 };
+                await stateService.AddAsync(currentState);
+                await client.SendTextMessageAsync(CurrentUserId, "please enter starting day 1 from to 31", replyMarkup: inreply());
+                return Ok();
+            }
         }
 
-
-        IReplyMarkup empty()
+        private async Task<IActionResult> WrongUsage(long CurrentUserId, TelegramBotClient client)
         {
-            var r = new ReplyKeyboardMarkup(new KeyboardButton[][]
-         {
-        new KeyboardButton[]
-        {
-            new KeyboardButton("please enter above from 1 to 30")
-        }
-         });
-
-            return r;
+            await client.SendTextMessageAsync(CurrentUserId, "please enter starting day 1 from to 30");
+            return Ok();
         }
 
-        IReplyMarkup getcitiess()
+        IReplyMarkup GetCities()
         {
 
             var cities = getcities();
@@ -384,8 +354,27 @@ namespace TelegramBotAPI.Controllers
             //return myInlineKeyboard;
         }
 
+        IReplyMarkup CancelButtons()
+        {
+            InlineKeyboardMarkup myInlineKeyboard = new InlineKeyboardMarkup(
 
-        IReplyMarkup getofficies()
+            new InlineKeyboardButton[][]
+                {
+                    new InlineKeyboardButton[] // First row
+                    {
+                        InlineKeyboardButton.WithCallbackData( // First Column
+                            "Yes", // Button Name
+                            "Yes" // Answer you'll recieve
+                        ),
+                        InlineKeyboardButton.WithCallbackData( //Second column
+                            "No", // Button Name
+                            "No" // Answer you'll recieve
+                        ),
+                    }
+            });
+            return myInlineKeyboard;
+        }
+        IReplyMarkup GetOffices()
         {
             var ofices = officies();
             int introwcount = officies().Count;
@@ -461,9 +450,7 @@ namespace TelegramBotAPI.Controllers
             //            });
             //           return myInlineKeyboard;
         }
-
-
-        IReplyMarkup getworkingdesks()
+        IReplyMarkup GetWorkingDesks()
         {
 
 
@@ -500,8 +487,6 @@ namespace TelegramBotAPI.Controllers
             return myInlineKeyboard1;
 
         }
-
-
         IReplyMarkup MonthF()
         {
             InlineKeyboardMarkup myInlineKeyboard = new InlineKeyboardMarkup(
@@ -533,7 +518,6 @@ new InlineKeyboardButton[][]
             });
             return myInlineKeyboard;
         }
-
         IReplyMarkup MonthL()
         {
             InlineKeyboardMarkup myInlineKeyboard = new InlineKeyboardMarkup(
@@ -565,8 +549,6 @@ new InlineKeyboardButton[][]
             });
             return myInlineKeyboard;
         }
-
-
         IReplyMarkup inreply()
         {
             InlineKeyboardMarkup myInlineKeyboard = new InlineKeyboardMarkup(
@@ -712,8 +694,6 @@ new InlineKeyboardButton[][]
             });
             return myInlineKeyboard;
         }
-
-
     }
 }
 

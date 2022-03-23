@@ -12,12 +12,9 @@ namespace BusinessLayer.Interfaces
         Task<List<Reserve>> ListAsync();
         Task<Reserve> GetByIdAsync(int id);
         Task<List<Reserve>> GetByOfficeId(int officeId,DateTime startDate);
-
         Task UpdateAsync(Reserve reserve);
         Task<Reserve> AddInAdvanceAsync(Reserve reserve);
 
-
-        //  Task<List<ReserveResponseDto>> GetReservesForEachEmployee(List<ReserveResponseDto> reserves, CancellationToken cancellationToken = default);
         public string TestBot();
     }
 }
