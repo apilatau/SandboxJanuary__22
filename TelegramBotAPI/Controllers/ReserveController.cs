@@ -3,6 +3,8 @@ using BusinessLayer.Interfaces;
 using DataLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json.Linq;
+using Hangfire;
 using System.Data;
 
 namespace TelegramBotAPI.Controllers
@@ -20,7 +22,6 @@ namespace TelegramBotAPI.Controllers
         {
             this.reserveService = reserveService;
             this.logger = logger;
-
         }
 
 
@@ -40,6 +41,31 @@ namespace TelegramBotAPI.Controllers
             return await reserveService.BookByParameters(userId, workingDeskId, startDate, endDate, selectedDays, frequency);
         }
 
+        [HttpDelete("CancelReserve")]
+        [Authorize(Roles = "Administrator")]
+        public async Task CancelReserve(int reserveId)
+        {
+                await reserveService.DeleteAsync(reserveId);
+        }
+
+        [HttpDelete("CancelOwnReserve")]
+        public async Task CancelOwnReserve(int reserveId,int telegramId)
+        {
+            var ownReserve = await reserveService.GetByIdAsync(reserveId);
+            if (ownReserve.UserId == telegramId)
+            {
+                await reserveService.DeleteAsync(ownReserve.Id);
+            }
+        }
+
+
+        [HttpDelete("TimeChecker")]
+        public async void TimeChecker()
+        {
+            RecurringJob.AddOrUpdate(() => reserveService.TimeChecker(GetAll().Result), "1 * * * * *");
+        }
+
+
 
         //[HttpPost("AddBooking")]
         //public async Task<Reserve> AddReserve([FromBody]Reserve reserve)
@@ -53,17 +79,17 @@ namespace TelegramBotAPI.Controllers
         //    return await reserveService.AddInAdvanceAsync(reserve);
         //}
 
-        //[HttpGet("booking/{id}")]
-        //public async Task<Reserve> GetById(int id)
-        //{
-        //    return await reserveService.GetByIdAsync(id);
-        //}
+        [HttpGet("booking/{id}")]
+        public async Task<Reserve> GetById(int id)
+        {
+            return await reserveService.GetByIdAsync(id);
+        }
 
-        //[HttpGet("GetAll")]
-        //public async Task<List<Reserve>> GetAll()
-        //{
-        //    return await reserveService.ListAsync();
-        //}
+        [HttpGet("GetAll")]
+        public async Task<List<Reserve>> GetAll()
+        {
+            return await reserveService.ListAsync();
+        }
 
     }
 }

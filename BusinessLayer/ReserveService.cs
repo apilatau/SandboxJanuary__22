@@ -152,7 +152,6 @@ namespace BusinessLayer
 
         public async Task DeleteAsync(Reserve reserve) => await reserveRepository.DeleteAsync(reserve);
 
-
         public async Task<Reserve> GetByIdAsync(int id)
         {
             return await reserveRepository.GetByIdAsync(id);
@@ -165,6 +164,22 @@ namespace BusinessLayer
 
         public async Task UpdateAsync(Reserve reserve) => await reserveRepository.UpdateAsync(reserve);
 
+        public async Task DeleteAsync(int reserveId)
+        {
+            var reserve = GetByIdAsync(reserveId);
+            await reserveRepository.DeleteAsync(reserve.Result);
+        }
+
+        public async Task TimeChecker(List<Reserve> reserves)
+        {
+            foreach(Reserve reserve in reserves)
+            {
+                if (reserve.EndDate <= DateTime.UtcNow)
+                {
+                    await reserveRepository.DeleteAsync(reserve);
+                }
+            }
+        }
     }
 }
 

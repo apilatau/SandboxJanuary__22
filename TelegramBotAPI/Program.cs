@@ -1,6 +1,9 @@
 using BusinessLayer;
 using DataLayer;
 using DataLayer.Data;
+using Hangfire;
+using Hangfire.SqlServer;
+using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +13,9 @@ using System.Reflection;
 using System.Text;
 using Telegram.Bot;
 using TelegramBotAPI.Services;
+using BusinessLayer;
+using TelegramBotAPI.Controllers;
+using BusinessLayer.Interfaces;
 using TelegramBotAPI.States;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -60,6 +66,15 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+
+builder.Services.AddHangfire(config =>
+    config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseDefaultTypeSerializer()
+    .UseMemoryStorage());
+
+builder.Services.AddHangfireServer();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddSwaggerGen();
@@ -126,7 +141,11 @@ builder.Services.AddSwaggerGen(opt =>
 });
 builder.Services.AddSwaggerGenNewtonsoftSupport();
 
+
 var app = builder.Build();
+
+app.UseHangfireDashboard();
+app.UseHangfireServer();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
