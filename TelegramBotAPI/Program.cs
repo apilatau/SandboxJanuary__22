@@ -16,12 +16,15 @@ using TelegramBotAPI.Services;
 using BusinessLayer;
 using TelegramBotAPI.Controllers;
 using BusinessLayer.Interfaces;
+using TelegramBotAPI.States;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson(opts => opts.SerializerSettings.Converters.Add(new StringEnumConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDataServices();
 builder.Services.AddBusinessServices();
@@ -74,18 +77,24 @@ builder.Services.AddHangfire(config =>
 builder.Services.AddHangfireServer();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-//builder.Services.AddHostedService<ConfigureWebHook>();
+builder.Services.AddSwaggerGen();
+builder.Services.AddHostedService<ConfigureWebHook>();
 builder.Services.AddHttpClient("tgwebhook")
             .AddTypedClient<ITelegramBotClient>(httpClient =>
-            new TelegramBotClient("5120059284:AAEW1xdREZG09BSV5akzkZaifa_nEUJOr48", httpClient));
+            new TelegramBotClient(builder.Configuration["BotConfiguration:Token"], httpClient));
+
 builder.Services.AddScoped<HandleUpdateService>();
+builder.Services.AddScoped<IStart, Start>();
+builder.Services.AddScoped<IBookingState, SelectCity>();
+builder.Services.AddScoped<IBookingState, SelectOffice>();
+builder.Services.AddScoped<IBookingState, SelectStartDate>();
+
 
 builder.Services.AddSwaggerGen(opt =>
 {
-    opt.SwaggerDoc("v1", new OpenApiInfo 
-    { 
-        Title = "TelegramBotAPI", 
+    opt.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "TelegramBotAPI",
         Version = "v1",
         Description = "An API to perform Telegram Bot operations",
         TermsOfService = new Uri("https://core.telegram.org/api/terms"),
@@ -101,7 +110,7 @@ builder.Services.AddSwaggerGen(opt =>
         }
     });
 
-    // using System.Reflection;
+   // using System.Reflection;
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
@@ -162,7 +171,7 @@ app.UseAuthorization();
 app.UseSession();
 app.UseEndpoints(endpoints =>
 {
-    var token = "5173236015:AAHiLg_3pCAiMk46B6t7k7HigKnMBmQqR3Y";
+    var token = builder.Configuration["BotConfiguration:Token"];
 
     endpoints.MapControllerRoute(name: "tgwebhook",
         pattern: $"bot/{token}",

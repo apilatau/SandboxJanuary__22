@@ -1,7 +1,6 @@
 ﻿using BusinessLayer.Exceptions;
 using BusinessLayer.Interfaces;
 using DataLayer.Data;
-using DataLayer.Dtos.ReportDto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace TelegramBotAPI.Controllers
