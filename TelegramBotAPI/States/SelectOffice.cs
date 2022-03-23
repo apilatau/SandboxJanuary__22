@@ -18,15 +18,26 @@ namespace TelegramBotAPI.States
         public async Task ExecuteAsync(Update update)
         {
             var markup = new InlineKeyboardMarkup(
+            new InlineKeyboardButton[][]
+            {
+
                 new InlineKeyboardButton[]
                 {
                     InlineKeyboardButton
-                        .WithCallbackData(text: "Office1", callbackData: "Office1"),
+                        .WithCallbackData(text: "Office 1", callbackData: "Office 1"),
 
                     InlineKeyboardButton
-                        .WithCallbackData(text: "Office2", callbackData: "Office2")
-                });
-            
+                        .WithCallbackData(text: "Office 2", callbackData: "Office 2")
+                },
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton
+                        .WithCallbackData(text: "Office 3", callbackData: "Office 3"),
+                    InlineKeyboardButton
+                        .WithCallbackData(text: "Office 4", callbackData: "Office 4")
+                }
+            });
+
             await _botClient.SendTextMessageAsync(
                    chatId: update.CallbackQuery!.Message!.Chat.Id,
                    text: "Available Offices:",

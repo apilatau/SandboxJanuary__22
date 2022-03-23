@@ -1,5 +1,4 @@
 ﻿using DataLayer.Models;
-using DataLayer.Responses;
 
 namespace BusinessLayer.Interfaces
 {

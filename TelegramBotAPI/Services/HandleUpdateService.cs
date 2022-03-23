@@ -28,7 +28,15 @@ namespace TelegramBotAPI.Services
             _botClient = botClient;
             _start = start;
 
-            bookingState = new SelectCity(_botClient, cityService);
+            try
+            {
+                bookingState = new SelectCity(_botClient, cityService);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            } 
         }
 
         public async Task Execute(Update update)
@@ -68,7 +76,7 @@ namespace TelegramBotAPI.Services
 
         private bool CheckOffice(string? data)
         {
-            if (data == "Office1")
+            if (data == "Office 1")
             {
                 return true;
             }
