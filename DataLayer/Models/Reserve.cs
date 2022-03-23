@@ -12,12 +12,14 @@ namespace DataLayer.Models
 
         public int UserrId { get; set; }
         [JsonIgnore]
-        public Userr? User { get; set; } 
-
+        public Userr? User { get; set; }
         public int BookingTypeId { get; set; }
         [JsonIgnore]
         public BookingType? BookingType { get; set; }
         public bool IsReccuring { get; set; }
         public int Frequency { get; set; }
+        public int OfficeId { get; set; }
+        [JsonIgnore]
+        public Office? Office { get; set; }
     }
 }

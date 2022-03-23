@@ -2,7 +2,6 @@
 using DataLayer.Data;
 using DataLayer.IRepositories;
 using DataLayer.Models;
-using DataLayer.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLayer
@@ -30,8 +29,8 @@ namespace BusinessLayer
         {
             return await reserveRepository.AddAsync(reserve);
         }
-        
-        public string  TestBot()
+
+        public string TestBot()
         {
             return "from reserve service";
         }
@@ -84,7 +83,7 @@ namespace BusinessLayer
                     await reserveRepository.SaveChangesAsync();
                 }
             }
-               
+
             return await reserveRepository.AddAsync(reserve);
         }
 
@@ -124,7 +123,10 @@ namespace BusinessLayer
 
         public async Task UpdateAsync(Reserve reserve) => await reserveRepository.UpdateAsync(reserve);
 
-
+        public async Task<List<Reserve>> GetByOfficeId(int officeId, DateTime startDate)
+        {
+            return (await reserveRepository.ListAsync()).Where(x => x.OfficeId == officeId && x.EndDate.Date >= startDate.Date).ToList();
+        }
     }
 }
 

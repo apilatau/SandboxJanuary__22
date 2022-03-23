@@ -11,6 +11,8 @@ namespace BusinessLayer.Interfaces
         Task DeleteAsync(Reserve reserve);
         Task<List<Reserve>> ListAsync();
         Task<Reserve> GetByIdAsync(int id);
+        Task<List<Reserve>> GetByOfficeId(int officeId,DateTime startDate);
+
         Task UpdateAsync(Reserve reserve);
         Task<Reserve> AddInAdvanceAsync(Reserve reserve);
 

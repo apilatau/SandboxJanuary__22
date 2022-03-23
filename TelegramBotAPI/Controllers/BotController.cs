@@ -17,14 +17,16 @@ namespace TelegramBotAPI.Controllers
         private readonly IUserService userService;
         private readonly IStateService stateService;
         private readonly ApplicationDbContext applicationdbcontext;
+        private readonly IReserveService reserveService;
         private readonly ICityService cityService;
 
-        public BotController(IRoleService roleService, IUserService userService, IStateService stateService, ApplicationDbContext applicationdbcontext)
+        public BotController(IRoleService roleService, IUserService userService, IStateService stateService, ApplicationDbContext applicationdbcontext, IReserveService reserveService)
         {
             this.roleService = roleService;
             this.userService = userService;
             this.stateService = stateService;
             this.applicationdbcontext = applicationdbcontext;
+            this.reserveService = reserveService;
             this.cityService = cityService;
         }
 
@@ -96,7 +98,7 @@ namespace TelegramBotAPI.Controllers
                     await stateService.AddAsync(state2);
                     await client.SendTextMessageAsync(curruser, "please enter starting day 1 from to 31", replyMarkup: inreply());
                     return Ok();
-                } 
+                }
             }
 
 
@@ -112,10 +114,10 @@ namespace TelegramBotAPI.Controllers
 
                 if (level == 2)
                 {
-                    if (message.Contains("*"))
+                    if (char.IsNumber(message[0]))
                     {
 
-                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x=>x.OwnerTelegramId==curruser);
+                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
                         await client.SendTextMessageAsync(curruser, "please choose ending day 1 from to 31", replyMarkup: inreply());
                         state.startmonth = message;
                         state.Level = 3;
@@ -155,7 +157,7 @@ namespace TelegramBotAPI.Controllers
                 }
                 else if (level == 4)
                 {
-                    if (message.Contains("-"))
+                    if (char.IsNumber(message[0]))
                     {
 
                         await client.SendTextMessageAsync(curruser, "Please Choose Cities", replyMarkup: getcitiess());
@@ -211,14 +213,18 @@ namespace TelegramBotAPI.Controllers
                             sb.Append($" hasPC: { offices.ElementAt(i).HasComputer}");
                             sb.AppendLine($" hasWindow: { offices.ElementAt(i).NextToWindow}");
                         }
+                        await client.SendTextMessageAsync(curruser, $"{sb}", replyMarkup: getworkingdesks());
 
-                        await client.SendTextMessageAsync(curruser, $"{sb.ToString()}", replyMarkup: getworkingdesks());
                         var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
+                        //DateTime datestart = new DateTime(int.Parse(state.Startday), int.Parse(state.startmonth), DateTime.Now.Year);
+                        DateTime datestart = DateTime.Now;
 
                         state.OfficeNumb = int.Parse(message);
                         state.Level = 7;
 
                         await stateService.UpdateAsync(state);
+
+
                         return Ok();
                     }
                     else
@@ -233,14 +239,34 @@ namespace TelegramBotAPI.Controllers
                 {
                     if (char.IsNumber(message[0]))
                     {
-
-                        await client.SendTextMessageAsync(curruser, "you succesfully reserved");
                         var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
 
                         state.WorkingDeskNumb = int.Parse(message);
                         state.Level = 8;
 
                         await stateService.UpdateAsync(state);
+
+                        var userId = (await GetUsers()).FirstOrDefault(x => x.TelegramId == curruser).Id;
+
+                        DateTime datestart = DateTime.UtcNow;//new DateTime(int.Parse(state.Startday), int.Parse(state.startmonth), DateTime.Now.Year);
+                        DateTime dateend = DateTime.UtcNow;// new DateTime(int.Parse(state.enday), int.Parse(state.endmonth), DateTime.Now.Year);
+
+                        var reserve = new Reserve
+                        {
+                            UserrId = userId,
+                            StartDate = datestart,
+                            EndDate = dateend,
+                            WorkingDeskId = state.WorkingDeskNumb.Value,
+                            IsReccuring = false,
+                            Frequency = 0,
+                            OfficeId = state.OfficeNumb.Value,
+                            BookingTypeId = 2
+                        };
+
+                        await reserveService.AddAsync(reserve);
+
+
+                        await client.SendTextMessageAsync(curruser, "you succesfully reserved");
                         return Ok();
                     }
                     else
@@ -275,52 +301,8 @@ namespace TelegramBotAPI.Controllers
                     return Ok();
                 }
             }
-            //else
-            //{
-            //    await client.SendTextMessageAsync(curruser, "sorry u are not exadel employee");
-            //    return Ok();
-            //}
-
-            //if (text != button3 && text != button2)
-            //{
-            //    await client.SendTextMessageAsync(update.Message.From.Id, "please choose starting date", replyMarkup: getdatebuttons());
-            //    return Ok();
-            //}
-            //else
-            //{
-            //    if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
-            //    {
-            //        Int64 curruser = update.Message.Chat.Id;
-            //        var usersinstate = stateService.CurrentListOfStates().Result.Select(x => x.OwnerTelegramId).ToList();
-
-            //        //var users = GetUsers().Result;
-            //        //if (true)//(users.Select(x => x.TelegramId).Contains(update.Message.Chat.Id))
-            //        //{
-            //        if (usersinstate.Contains(curruser))
-            //        {
-            //            await client.SendTextMessageAsync(update.Message.From.Id, "please choose end date", replyMarkup: getdatebuttons2());
-            //            var state = (await stateService.CurrentListOfStates()).LastOrDefault();
-            //            state.EndDate = text;
-
-            //            await stateService.UpdateAsync(state);
-
-            //        }
-            //        else
-            //        {
-            //            await client.SendTextMessageAsync(update.Message.From.Id, "please chosse the startingdate", replyMarkup: getdatebuttons());
-            //            Int64 id = update.Message.Chat.Id;
-            //            var state2 = new State() { OwnerTelegramId = update.Message.Chat.Id, StartDate = text };
-            //            await stateService.AddAsync(state2);
-            //        }
-            //    }
-            //}
 
 
-
-
-
-
-            return Ok();
         }
 
 
@@ -483,6 +465,8 @@ namespace TelegramBotAPI.Controllers
 
         IReplyMarkup getworkingdesks()
         {
+
+
             var ofices = getalldesks();
             int introwcount = getalldesks().Count;
 
@@ -502,7 +486,7 @@ namespace TelegramBotAPI.Controllers
 
             for (int i = 0; i < firstcount; i++)
             {
-                firstrow[i] = InlineKeyboardButton.WithCallbackData($"N:{ofices.ElementAt(i).Id}",  $"{ofices.ElementAt(i).Id}");
+                firstrow[i] = InlineKeyboardButton.WithCallbackData($"N:{ofices.ElementAt(i).Id}", $"{ofices.ElementAt(i).Id}");
             }
 
             for (int i = 0; i < secondcount; i++)
@@ -528,21 +512,21 @@ new InlineKeyboardButton[][]
         {
             InlineKeyboardButton.WithCallbackData( // First Column
                 "March", // Button Name
-                "March*" // Answer you'll recieve
+                "3" // Answer you'll recieve
             ),
             InlineKeyboardButton.WithCallbackData( //Second column
                 "April", // Button Name
-                "April*" // Answer you'll recieve
+                "4" // Answer you'll recieve
             ),
         },    new InlineKeyboardButton[] // First row
         {
                InlineKeyboardButton.WithCallbackData( // First Column
                 "May", // Button Name
-                "May*" // Answer you'll recieve
+                "5" // Answer you'll recieve
             ),
                InlineKeyboardButton.WithCallbackData( // First Column
                 "June", // Button Name
-                "June*" // Answer you'll recieve
+                "6" // Answer you'll recieve
             ),
 
         }
@@ -560,21 +544,21 @@ new InlineKeyboardButton[][]
         {
             InlineKeyboardButton.WithCallbackData( // First Column
                 "March", // Button Name
-                "March-" // Answer you'll recieve
+                "3" // Answer you'll recieve
             ),
             InlineKeyboardButton.WithCallbackData( //Second column
                 "April", // Button Name
-                "April-" // Answer you'll recieve
+                "4" // Answer you'll recieve
             ),
         },    new InlineKeyboardButton[] // First row
         {
                InlineKeyboardButton.WithCallbackData( // First Column
                 "May", // Button Name
-                "May-" // Answer you'll recieve
+                "5" // Answer you'll recieve
             ),
                InlineKeyboardButton.WithCallbackData( // First Column
                 "June", // Button Name
-                "June-" // Answer you'll recieve
+                "6" // Answer you'll recieve
             ),
 
         }

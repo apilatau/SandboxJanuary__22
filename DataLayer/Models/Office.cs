@@ -8,6 +8,5 @@
         public int CityId { get; set; } 
         public int CountryId { get; set; }  
         public bool Parking { get; set; }   
-
     }
 }

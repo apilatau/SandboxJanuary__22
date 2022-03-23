@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
 
 namespace DataLayer.Models
 {
@@ -13,6 +12,9 @@ namespace DataLayer.Models
 
         //public int MapId { get; set; }
         //public Map? Map { get; set; }
+        public int OfficeId { get; set; }
+        [JsonIgnore]
+        public Office? Office { get; set; }
 
         public bool HasComputer { get; set; }
         public bool NextToWindow { get; set; }

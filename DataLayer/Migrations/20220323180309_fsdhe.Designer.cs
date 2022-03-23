@@ -3,6 +3,7 @@ using System;
 using DataLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220323180309_fsdhe")]
+    partial class fsdhe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -395,14 +397,9 @@ namespace DataLayer.Migrations
                     b.Property<int>("Number")
                         .HasColumnType("integer");
 
-                    b.Property<int>("OfficeId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MapId");
-
-                    b.HasIndex("OfficeId");
 
                     b.ToTable("WorkingDesks");
                 });
@@ -511,14 +508,6 @@ namespace DataLayer.Migrations
                     b.HasOne("DataLayer.Models.Map", null)
                         .WithMany("WorkingDesks")
                         .HasForeignKey("MapId");
-
-                    b.HasOne("DataLayer.Models.Office", "Office")
-                        .WithMany()
-                        .HasForeignKey("OfficeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Office");
                 });
 
             modelBuilder.Entity("DataLayer.Models.BookingType", b =>
