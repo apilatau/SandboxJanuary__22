@@ -16,6 +16,8 @@ namespace DataLayer.Models
         public string? startmonth { get; set; }
         public string? enday { get; set; }
         public string? endmonth { get; set; }
+        public int? CityNumb { get; set; }
+        public int? OfficeNumb { get; set; }
         public int UserrNum { get; set; }
         public int? BookingTypeNum { get; set; }
         public bool? IsReccuring { get; set; }

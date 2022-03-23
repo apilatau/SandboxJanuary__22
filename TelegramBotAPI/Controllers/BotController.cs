@@ -50,35 +50,73 @@ namespace TelegramBotAPI.Controllers
             return applicationdbcontext.WorkingDesks.ToList();
         }
 
+
+        [HttpGet("getallofficies")]
+
+        public List<Office> officies()
+        {
+            return applicationdbcontext.Offices.ToList();
+        }
+
+
+
         [HttpPost]
 
         public async Task<IActionResult> Post([FromBody] Update update)
         {
-            
-            TelegramBotClient client = new TelegramBotClient("5293359107:AAGfzC1GBMkLHzqy1enu4dbBHEvHqJ5Iq78");
-            string msg = update.Message.Text;
-
-            int level;
-
-            Int64 curruser = update.Message.Chat.Id;
+            string message;
+            Int64 curruser;
             var usersinstate = stateService.CurrentListOfStates().Result.Select(x => x.OwnerTelegramId).ToList();
-
+            //return Ok();
             var users = await GetUsers();
 
-            
-            level = (await stateService.CurrentListOfStates()).OrderBy(x => x.Level).LastOrDefault().Level;
+            TelegramBotClient client = new TelegramBotClient("5293359107:AAGfzC1GBMkLHzqy1enu4dbBHEvHqJ5Iq78");
 
-            if (true)
+            if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
+            {
+                message = update.Message.Text.ToLower();
+                curruser = update.Message.Chat.Id;
+
+                if (!usersinstate.Contains(curruser))
+                {
+                    var state2 = new State() { OwnerTelegramId = update.Message.Chat.Id, Level = 1 };
+                    await stateService.AddAsync(state2);
+                    await client.SendTextMessageAsync(curruser, "please enter starting day 1 from to 31", replyMarkup: inreply());
+                    return Ok();
+                }
+            }
+            else
+            {
+                message = update.CallbackQuery.Data.ToLower();
+                curruser = update.CallbackQuery.From.Id;
+
+                if (!usersinstate.Contains(curruser))
+                {
+                    var state2 = new State() { OwnerTelegramId = update.Message.Chat.Id, Level = 1 };
+                    await stateService.AddAsync(state2);
+                    await client.SendTextMessageAsync(curruser, "please enter starting day 1 from to 31", replyMarkup: inreply());
+                    return Ok();
+                } 
+            }
+
+
+            int level = 0;
+
+            var lvlobject = (await stateService.CurrentListOfStates()).LastOrDefault();
+            level = lvlobject.Level;
+
+
+
+            if (true) //usersinstate.Contains(curruser)
             {
 
                 if (level == 2)
                 {
-                    string message = update.Message.Text;
                     if (message.Contains("*"))
                     {
 
-                        var state = (await stateService.CurrentListOfStates()).LastOrDefault();
-                        await client.SendTextMessageAsync(update.Message.From.Id, "please enter ending day 1 from to 31", replyMarkup: empty());
+                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x=>x.OwnerTelegramId==curruser);
+                        await client.SendTextMessageAsync(curruser, "please choose ending day 1 from to 31", replyMarkup: inreply());
                         state.startmonth = message;
                         state.Level = 3;
 
@@ -89,7 +127,7 @@ namespace TelegramBotAPI.Controllers
                     {
 
                         //await client.SendTextMessageAsync(update.Message.From.Id, "please choose end date", replyMarkup: getdatebuttons2());
-                        await client.SendTextMessageAsync(update.Message.From.Id, "please choose start month", replyMarkup: getdatebuttons());
+                        await client.SendTextMessageAsync(curruser, "please use buttons");
                         return Ok();
 
                     }
@@ -97,30 +135,31 @@ namespace TelegramBotAPI.Controllers
 
                 else if (level == 3)
                 {
-                    string message = update.Message.Text;
+
                     if (message.Length <= 2 && char.IsNumber(message[0]))
                     {
 
-                        Int64 id = update.Message.Chat.Id;
+                        Int64 id = update.CallbackQuery.From.Id;
 
-                        var state2 = new State() { OwnerTelegramId = update.Message.Chat.Id, enday = message, Level = 4 };
+                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
+                        state.enday = message;
+                        state.Level = 4;
 
-                        await stateService.AddAsync(state2);
-                        await client.SendTextMessageAsync(update.Message.From.Id, "please choose ending Month", replyMarkup: getdatebuttons2());
+                        await stateService.UpdateAsync(state);
+                        await client.SendTextMessageAsync(curruser, "please choose ending Month", replyMarkup: MonthL());
                         return Ok();
                     }
-                    await client.SendTextMessageAsync(update.Message.From.Id, "please enter ending day 1 from to 30", replyMarkup: empty());
+                    await client.SendTextMessageAsync(curruser, "please use buttons");
                     return Ok();
 
                 }
                 else if (level == 4)
                 {
-                    string message = update.Message.Text;
                     if (message.Contains("-"))
                     {
 
-                        await client.SendTextMessageAsync(update.Message.From.Id, "Please Choose Cities", replyMarkup: getcitiess());
-                        var state = (await stateService.CurrentListOfStates()).LastOrDefault();
+                        await client.SendTextMessageAsync(curruser, "Please Choose Cities", replyMarkup: getcitiess());
+                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
 
                         state.endmonth = message;
                         state.Level = 5;
@@ -130,32 +169,21 @@ namespace TelegramBotAPI.Controllers
                     }
                     else
                     {
-                        await client.SendTextMessageAsync(update.Message.From.Id, "please choose end month", replyMarkup: getdatebuttons2());
+                        await client.SendTextMessageAsync(curruser, "please use buttons");
                         return Ok();
 
                     }
                 }
+
                 else if (level == 5)
                 {
-                    string message = update.Message.Text.ToLower();
-                    if (message.Contains("tbilisi") || message.Contains("tashkent") || message.Contains("kyiev"))
+                    if (char.IsNumber(message[0]))
                     {
-                        StringBuilder sb = new StringBuilder();
 
-                        var desks = getalldesks();
+                        await client.SendTextMessageAsync(curruser, $"Select Offices:", replyMarkup: getofficies());
+                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
 
-                        for (int i = 0; i < getalldesks().Count; i++)
-                        {
-                            sb.AppendLine($"{ desks.ElementAt(i).Id}");
-                            sb.Append($",  hascomputer: {desks.ElementAt(i).HasComputer}");
-                            sb.Append($",  haswindow  {desks.ElementAt(i).NextToWindow}");
-                        }
-
-
-                        await client.SendTextMessageAsync(update.Message.From.Id, $"{sb.ToString()}", replyMarkup: getworkingdesks());
-                        var state = (await stateService.CurrentListOfStates()).LastOrDefault();
-
-                        state.endmonth = message;
+                        state.CityNumb = int.Parse(message);
                         state.Level = 6;
 
                         await stateService.UpdateAsync(state);
@@ -163,7 +191,7 @@ namespace TelegramBotAPI.Controllers
                     }
                     else
                     {
-                        await client.SendTextMessageAsync(update.Message.From.Id, "please choose city", replyMarkup: getdatebuttons());
+                        await client.SendTextMessageAsync(curruser, "please use buttons");
                         return Ok();
 
                     }
@@ -171,56 +199,87 @@ namespace TelegramBotAPI.Controllers
 
                 else if (level == 6)
                 {
-                    string message = update.Message.Text.ToLower();
-                    if (message.Length <= 2 && char.IsNumber(message[0]))
+                    if (char.IsNumber(message[0]))
                     {
+                        StringBuilder sb = new StringBuilder();
 
-                        await client.SendTextMessageAsync(update.Message.From.Id, "you succesfully reserved", replyMarkup: succesreservation());
-                        var state = (await stateService.CurrentListOfStates()).LastOrDefault();
+                        var offices = getalldesks();
+                        sb.AppendLine("please choose Workingdesk");
+                        for (int i = 0; i < getalldesks().Count; i++)
+                        {
+                            sb.Append($" N: { offices.ElementAt(i).Id}");
+                            sb.Append($" hasPC: { offices.ElementAt(i).HasComputer}");
+                            sb.AppendLine($" hasWindow: { offices.ElementAt(i).NextToWindow}");
+                        }
 
-                        state.endmonth = message;
-                        state.Level = 6;
+                        await client.SendTextMessageAsync(curruser, $"{sb.ToString()}", replyMarkup: getworkingdesks());
+                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
+
+                        state.OfficeNumb = int.Parse(message);
+                        state.Level = 7;
 
                         await stateService.UpdateAsync(state);
                         return Ok();
                     }
                     else
                     {
-                        await client.SendTextMessageAsync(update.Message.From.Id, "please choose city", replyMarkup: getdatebuttons());
+                        await client.SendTextMessageAsync(curruser, "please use buttons");
+                        return Ok();
+
+                    }
+                }
+
+                else if (level == 7)
+                {
+                    if (char.IsNumber(message[0]))
+                    {
+
+                        await client.SendTextMessageAsync(curruser, "you succesfully reserved");
+                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
+
+                        state.WorkingDeskNumb = int.Parse(message);
+                        state.Level = 8;
+
+                        await stateService.UpdateAsync(state);
+                        return Ok();
+                    }
+                    else
+                    {
+                        await client.SendTextMessageAsync(curruser, "please use buttons");
                         return Ok();
 
                     }
                 }
                 else if (level == 1)
                 {
-                    string message = update.Message.Text;
                     if (message.Length <= 2 && char.IsNumber(message[0]))
                     {
-                        Int64 id = update.Message.Chat.Id;
+                        var state = (await stateService.CurrentListOfStates()).FirstOrDefault(x => x.OwnerTelegramId == curruser);
+                        state.Startday = message;
+                        state.Level = 2;
 
-                        var state2 = new State() { OwnerTelegramId = update.Message.Chat.Id, Startday = message, Level = 2 };
-
-                        await stateService.AddAsync(state2);
-                        await client.SendTextMessageAsync(update.Message.From.Id, "please choose staring Month", replyMarkup: getdatebuttons());
+                        await stateService.UpdateAsync(state);
+                        await client.SendTextMessageAsync(curruser, "please choose staring Month", replyMarkup: MonthF());
                         return Ok();
                     }
 
 
-                    await client.SendTextMessageAsync(update.Message.From.Id, "please enter starting day 1 from to 30", replyMarkup: empty());
+                    await client.SendTextMessageAsync(curruser, "please enter starting day 1 from to 30");
                     return Ok();
                 }
                 else
                 {
                     var state2 = new State() { OwnerTelegramId = update.Message.Chat.Id, Level = 1 };
                     await stateService.AddAsync(state2);
-                    await client.SendTextMessageAsync(update.Message.From.Id, "please enter starting day 1 from to 31", replyMarkup: empty());
+                    await client.SendTextMessageAsync(curruser, "please enter starting day 1 from to 31", replyMarkup: inreply());
                     return Ok();
                 }
             }
-            else
-            {
-                await client.SendTextMessageAsync(update.Message.From.Id, "sorry u are not exadel employee");
-            }
+            //else
+            //{
+            //    await client.SendTextMessageAsync(curruser, "sorry u are not exadel employee");
+            //    return Ok();
+            //}
 
             //if (text != button3 && text != button2)
             //{
@@ -278,105 +337,398 @@ namespace TelegramBotAPI.Controllers
             return r;
         }
 
-        IReplyMarkup getdatebuttons()
-        {
-            var r = new ReplyKeyboardMarkup(
-        new KeyboardButton[]
-        {
-            new KeyboardButton("jan*"),
-            new KeyboardButton("feb*"),
-            new KeyboardButton("march*"),
-            new KeyboardButton("april*"),
-            new KeyboardButton("may*"),
-            new KeyboardButton("jun*"),
-            new KeyboardButton("jul*"),
-            new KeyboardButton("aug*"),
-            new KeyboardButton("sep*"),
-            new KeyboardButton("oct*"),
-            new KeyboardButton("nov*"),
-            new KeyboardButton("dec*"),
-
-        }
-         );
-
-            return r;
-        }
-
-        IReplyMarkup getdatebuttons2()
-        {
-            var r = new ReplyKeyboardMarkup(new KeyboardButton[][]
-         {
-        new KeyboardButton[]
-        {
-            new KeyboardButton("jan-"),
-            new KeyboardButton("feb-"),
-            new KeyboardButton("march-"),
-            new KeyboardButton("april-"),
-            new KeyboardButton("may-"),
-            new KeyboardButton("jun-"),
-            new KeyboardButton("jul-"),
-            new KeyboardButton("aug-"),
-            new KeyboardButton("sep-"),
-            new KeyboardButton("oct-"),
-            new KeyboardButton("nov-"),
-            new KeyboardButton("dec-"),
-
-        }
-         });
-
-            return r;
-        }
-
-        IReplyMarkup succesreservation()
-        {
-            var r = new ReplyKeyboardMarkup(new KeyboardButton[][]
-         {
-        new KeyboardButton[]
-        {
-            new KeyboardButton("you succesfully reserved"),
-
-        }
-         });
-
-            return r;
-        }
-
-
         IReplyMarkup getcitiess()
         {
+
             var cities = getcities();
-            var r = new ReplyKeyboardMarkup(new KeyboardButton[][]
-         {
+            int introwcount = getcities().Count;
 
-                new KeyboardButton[]
-                {
-                    new KeyboardButton($"{cities.ElementAt(0).Name}"),
-                    new KeyboardButton($"{cities.ElementAt(1).Name}"),
-                    new KeyboardButton($"{cities.ElementAt(2).Name}"),
 
-                }
+            int firstcount;
+            int secondcount;
 
-         });
+            firstcount = introwcount / 2;
+            secondcount = introwcount - firstcount;
 
-            return r;
+            InlineKeyboardButton[][] keys = new InlineKeyboardButton[2][];
+            InlineKeyboardMarkup myInlineKeyboard1 = new InlineKeyboardMarkup(keys);
+
+
+            InlineKeyboardButton[] firstrow = new InlineKeyboardButton[firstcount];
+            InlineKeyboardButton[] secondrow = new InlineKeyboardButton[secondcount];
+
+            for (int i = 0; i < firstcount; i++)
+            {
+                firstrow[i] = InlineKeyboardButton.WithCallbackData($"{cities.ElementAt(i).Name}", $"{cities.ElementAt(i).Id}");
+            }
+
+            for (int i = 0; i < secondcount; i++)
+            {
+                secondrow[i] = InlineKeyboardButton.WithCallbackData($"{cities.ElementAt(i + firstcount).Name}", $"{cities.ElementAt(i + firstcount).Id}");
+            }
+
+            keys[0] = firstrow;
+            keys[1] = secondrow;
+
+            return myInlineKeyboard1;
+
+            //InlineKeyboardMarkup myInlineKeyboard = new InlineKeyboardMarkup(
+
+            //new InlineKeyboardButton[][]
+            //    {
+            //        new InlineKeyboardButton[] // First row
+            //        {
+            //            InlineKeyboardButton.WithCallbackData( // First Column
+            //                "Tbilisi", // Button Name
+            //                "tbilisi" // Answer you'll recieve
+            //            ),
+            //            InlineKeyboardButton.WithCallbackData( //Second column
+            //                "Uzbekistan", // Button Name
+            //                "uzbekistan" // Answer you'll recieve
+            //            ),
+            //        },    new InlineKeyboardButton[] // First row
+            //        {
+            //            InlineKeyboardButton.WithCallbackData( // First Column
+            //                "Polland", // Button Name
+            //                "polland" // Answer you'll recieve
+            //            ),
+            //            InlineKeyboardButton.WithCallbackData( //Second column
+            //                "Ukraine", // Button Name
+            //                "ukraine" // Answer you'll recieve
+            //            ),
+
+            //        }
+            //});
+            //return myInlineKeyboard;
+        }
+
+
+        IReplyMarkup getofficies()
+        {
+            var ofices = officies();
+            int introwcount = officies().Count;
+
+
+            int firstcount;
+            int secondcount;
+
+            firstcount = introwcount / 2;
+            secondcount = introwcount - firstcount;
+
+            InlineKeyboardButton[][] keys = new InlineKeyboardButton[2][];
+            InlineKeyboardMarkup myInlineKeyboard1 = new InlineKeyboardMarkup(keys);
+
+
+            InlineKeyboardButton[] firstrow = new InlineKeyboardButton[firstcount];
+            InlineKeyboardButton[] secondrow = new InlineKeyboardButton[secondcount];
+
+            for (int i = 0; i < firstcount; i++)
+            {
+                firstrow[i] = InlineKeyboardButton.WithCallbackData($"{ofices.ElementAt(i).Address}", $"{ofices.ElementAt(i).Id}");
+            }
+
+            for (int i = 0; i < secondcount; i++)
+            {
+                secondrow[i] = InlineKeyboardButton.WithCallbackData($"{ofices.ElementAt(i + firstcount).Address}", $"{ofices.ElementAt(i + firstcount).Id}");
+            }
+
+            keys[0] = firstrow;
+            keys[1] = secondrow;
+
+            return myInlineKeyboard1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //           InlineKeyboardMarkup myInlineKeyboard = new InlineKeyboardMarkup(
+
+            //new InlineKeyboardButton[][]
+            //            {
+            //       new InlineKeyboardButton[] // First row
+            //       {
+
+            //           InlineKeyboardButton.WithCallbackData( // First Column
+            //               "tbilisioffice", // Button Name
+            //               "tbilisi*" // Answer you'll recieve
+            //           ),
+            //           InlineKeyboardButton.WithCallbackData( //Second column
+            //               "qutaisioffice", // Button Name
+            //               "qutaisi*" // Answer you'll recieve
+            //           ),
+            //       },    new InlineKeyboardButton[] // First row
+            //       {
+            //           InlineKeyboardButton.WithCallbackData( // First Column
+            //               "khashurioffice", // Button Name
+            //               "kahsuri*" // Answer you'll recieve
+            //           ),
+            //           InlineKeyboardButton.WithCallbackData( //Second column
+            //               "samtredia", // Button Name
+            //               "June*" // Answer you'll recieve
+            //           ),
+
+            //       }
+            //            });
+            //           return myInlineKeyboard;
         }
 
 
         IReplyMarkup getworkingdesks()
         {
-            StringBuilder sb = new StringBuilder();
+            var ofices = getalldesks();
+            int introwcount = getalldesks().Count;
 
 
-            var r = new ReplyKeyboardMarkup(new KeyboardButton[][]
-         {
-                new KeyboardButton[]
-                {
-                    new KeyboardButton("please choos one of above working desk, enter its ID"),
-                }
-         });
+            int firstcount;
+            int secondcount;
 
-            return r;
+            firstcount = introwcount / 2;
+            secondcount = introwcount - firstcount;
+
+            InlineKeyboardButton[][] keys = new InlineKeyboardButton[2][];
+            InlineKeyboardMarkup myInlineKeyboard1 = new InlineKeyboardMarkup(keys);
+
+
+            InlineKeyboardButton[] firstrow = new InlineKeyboardButton[firstcount];
+            InlineKeyboardButton[] secondrow = new InlineKeyboardButton[secondcount];
+
+            for (int i = 0; i < firstcount; i++)
+            {
+                firstrow[i] = InlineKeyboardButton.WithCallbackData($"N:{ofices.ElementAt(i).Id}",  $"{ofices.ElementAt(i).Id}");
+            }
+
+            for (int i = 0; i < secondcount; i++)
+            {
+                secondrow[i] = InlineKeyboardButton.WithCallbackData($"N:{ofices.ElementAt(i + firstcount).Id}", $"{ofices.ElementAt(i).Id}");
+            }
+
+            keys[0] = firstrow;
+            keys[1] = secondrow;
+
+            return myInlineKeyboard1;
+
         }
+
+
+        IReplyMarkup MonthF()
+        {
+            InlineKeyboardMarkup myInlineKeyboard = new InlineKeyboardMarkup(
+
+new InlineKeyboardButton[][]
+            {
+        new InlineKeyboardButton[] // First row
+        {
+            InlineKeyboardButton.WithCallbackData( // First Column
+                "March", // Button Name
+                "March*" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "April", // Button Name
+                "April*" // Answer you'll recieve
+            ),
+        },    new InlineKeyboardButton[] // First row
+        {
+               InlineKeyboardButton.WithCallbackData( // First Column
+                "May", // Button Name
+                "May*" // Answer you'll recieve
+            ),
+               InlineKeyboardButton.WithCallbackData( // First Column
+                "June", // Button Name
+                "June*" // Answer you'll recieve
+            ),
+
+        }
+            });
+            return myInlineKeyboard;
+        }
+
+        IReplyMarkup MonthL()
+        {
+            InlineKeyboardMarkup myInlineKeyboard = new InlineKeyboardMarkup(
+
+new InlineKeyboardButton[][]
+            {
+        new InlineKeyboardButton[] // First row
+        {
+            InlineKeyboardButton.WithCallbackData( // First Column
+                "March", // Button Name
+                "March-" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "April", // Button Name
+                "April-" // Answer you'll recieve
+            ),
+        },    new InlineKeyboardButton[] // First row
+        {
+               InlineKeyboardButton.WithCallbackData( // First Column
+                "May", // Button Name
+                "May-" // Answer you'll recieve
+            ),
+               InlineKeyboardButton.WithCallbackData( // First Column
+                "June", // Button Name
+                "June-" // Answer you'll recieve
+            ),
+
+        }
+            });
+            return myInlineKeyboard;
+        }
+
+
+        IReplyMarkup inreply()
+        {
+            InlineKeyboardMarkup myInlineKeyboard = new InlineKeyboardMarkup(
+
+new InlineKeyboardButton[][]
+            {
+        new InlineKeyboardButton[] // First row
+        {
+            InlineKeyboardButton.WithCallbackData( // First Column
+                "1", // Button Name
+                "1" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "2", // Button Name
+                "2" // Answer you'll recieve
+            ),
+                        InlineKeyboardButton.WithCallbackData( // First Column
+                "3", // Button Name
+                "3" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "4", // Button Name
+                "4" // Answer you'll recieve
+            ),
+                        InlineKeyboardButton.WithCallbackData( // First Column
+                "5", // Button Name
+                "5" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "6", // Button Name
+                "6" // Answer you'll recieve
+            ),
+        },    new InlineKeyboardButton[] // First row
+        {
+            InlineKeyboardButton.WithCallbackData( // First Column
+                "7", // Button Name
+                "7" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "8", // Button Name
+                "8" // Answer you'll recieve
+            ),
+                        InlineKeyboardButton.WithCallbackData( // First Column
+                "9", // Button Name
+                "9" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "10", // Button Name
+                "10" // Answer you'll recieve
+            ),
+                        InlineKeyboardButton.WithCallbackData( // First Column
+                "11", // Button Name
+                "11" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "12", // Button Name
+                "12" // Answer you'll recieve
+            ),
+        },
+               new InlineKeyboardButton[] // First row
+        {
+            InlineKeyboardButton.WithCallbackData( // First Column
+                "13", // Button Name
+                "13" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "14", // Button Name
+                "14" // Answer you'll recieve
+            ),
+                        InlineKeyboardButton.WithCallbackData( // First Column
+                "15", // Button Name
+                "15" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "16", // Button Name
+                "16" // Answer you'll recieve
+            ),
+                        InlineKeyboardButton.WithCallbackData( // First Column
+                "17", // Button Name
+                "17" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "18", // Button Name
+                "18" // Answer you'll recieve
+            ),
+        },    new InlineKeyboardButton[] // First row
+        {
+            InlineKeyboardButton.WithCallbackData( // First Column
+                "19", // Button Name
+                "19" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "20", // Button Name
+                "20" // Answer you'll recieve
+            ),
+                        InlineKeyboardButton.WithCallbackData( // First Column
+                "21", // Button Name
+                "21" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "22", // Button Name
+                "22" // Answer you'll recieve
+            ),
+                        InlineKeyboardButton.WithCallbackData( // First Column
+                "23", // Button Name
+                "23" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "24", // Button Name
+                "24" // Answer you'll recieve
+            ),
+        },    new InlineKeyboardButton[] // First row
+        {
+            InlineKeyboardButton.WithCallbackData( // First Column
+                "25", // Button Name
+                "25" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "26", // Button Name
+                "26" // Answer you'll recieve
+            ),
+                        InlineKeyboardButton.WithCallbackData( // First Column
+                "27", // Button Name
+                "27" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "28", // Button Name
+                "28" // Answer you'll recieve
+            ),
+                        InlineKeyboardButton.WithCallbackData( // First Column
+                "29", // Button Name
+                "29" // Answer you'll recieve
+            ),
+            InlineKeyboardButton.WithCallbackData( //Second column
+                "30", // Button Name
+                "30" // Answer you'll recieve
+            ),
+                    InlineKeyboardButton.WithCallbackData( //Second column
+                "31", // Button Name
+                "31" // Answer you'll recieve
+            )
+        }
+            });
+            return myInlineKeyboard;
+        }
+
 
     }
 }
