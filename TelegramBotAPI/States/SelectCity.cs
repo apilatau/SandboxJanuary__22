@@ -1,4 +1,9 @@
-﻿using Telegram.Bot;
+﻿using BusinessLayer;
+using BusinessLayer.Interfaces;
+using DataLayer.Data;
+using DataLayer.Models;
+using System.Data.Entity;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -7,40 +12,49 @@ namespace TelegramBotAPI.States
     public class SelectCity : IBookingState
     {
         private readonly ITelegramBotClient _botClient;
-        public bool IsFinished { get; set; }
         public IBookingState bookingState { get; set; }
-        public SelectCity(ITelegramBotClient botClient)
+        private readonly ICityService _cityService;
+
+
+        public SelectCity(ITelegramBotClient botClient, ICityService cityService)
         {
             _botClient = botClient;
+            _cityService = cityService;
+
         }
+       
         public async Task ExecuteAsync(Update update)
         {
+
+            var cities = await _cityService.GetAllCityNames();
+
             var markup = new InlineKeyboardMarkup(
             new InlineKeyboardButton[][]
             {
+
                 new InlineKeyboardButton[]
                 {
                     InlineKeyboardButton
-                        .WithCallbackData(text: "A", callbackData: "A"),
+                        .WithCallbackData(text: "Tashkent", callbackData: "T"),
 
                     InlineKeyboardButton
-                        .WithCallbackData(text: "B", callbackData: "B")
+                        .WithCallbackData(text: "Tbilisi", callbackData: "T")
                 },
                 new InlineKeyboardButton[]
                 {
                     InlineKeyboardButton
-                        .WithCallbackData(text: "C", callbackData: "C"),
+                        .WithCallbackData(text: "Warsaw", callbackData: "W"),
                     InlineKeyboardButton
-                        .WithCallbackData(text: "D", callbackData: "D")
+                        .WithCallbackData(text: "Moscow", callbackData: "M")
                 }
             });
             await _botClient.SendTextMessageAsync(
                 chatId: update.Message!.Chat.Id,
                 text: "Available cities:",
-                replyMarkup: markup); ;
+                replyMarkup: markup);
+                
  
         }
-
         
     }
 }

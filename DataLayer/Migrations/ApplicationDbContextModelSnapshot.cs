@@ -327,7 +327,7 @@ namespace DataLayer.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CityId")
+                    b.Property<int>("CityId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Email")
@@ -380,7 +380,7 @@ namespace DataLayer.Migrations
                     b.Property<bool>("Booked")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("DeskTypeId")
+                    b.Property<int>("DeskTypeId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("HasHeadset")
@@ -398,7 +398,7 @@ namespace DataLayer.Migrations
                     b.Property<bool>("HasPC")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("MapId")
+                    b.Property<int>("MapId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("NextToWindow")
@@ -507,7 +507,9 @@ namespace DataLayer.Migrations
                 {
                     b.HasOne("DataLayer.Models.City", "City")
                         .WithMany("Users")
-                        .HasForeignKey("CityId");
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DataLayer.Models.Role", "Role")
                         .WithMany("Users")
@@ -524,11 +526,15 @@ namespace DataLayer.Migrations
                 {
                     b.HasOne("DataLayer.Models.DeskType", "DeskType")
                         .WithMany("WorkingDesks")
-                        .HasForeignKey("DeskTypeId");
+                        .HasForeignKey("DeskTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DataLayer.Models.Map", "Map")
                         .WithMany("WorkingDesks")
-                        .HasForeignKey("MapId");
+                        .HasForeignKey("MapId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("DeskType");
 
