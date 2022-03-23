@@ -10,6 +10,6 @@ namespace DataLayer.Models
         public string RoleName { get; set; }
 
         [JsonIgnore]
-        public ICollection<User>? Users { get; set; }
+        public ICollection<Userr>? Users { get; set; }
     }
 }

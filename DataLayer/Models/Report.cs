@@ -7,7 +7,7 @@ namespace DataLayer.Models
     {
         public int UserId { get; set; }
         [JsonIgnore]
-        public User? User { get; set; }
+        public Userr? User { get; set; }
 
         public int CountryId { get; set; }
         

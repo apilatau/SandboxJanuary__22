@@ -11,9 +11,9 @@ namespace DataLayer.Repositories
 {
     public class CityRepository : RepositoryBase<City>, ICityRepository
     {
-        public CityRepository(ApplicationDbContext dbContext) :base(dbContext)
+        public CityRepository(ApplicationDbContext dbContext) : base(dbContext) 
         {
-            
+
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿using DataLayer.Dto.MapDto;
-using DataLayer.Dtos.WorkingDeskDto;
+﻿
 using DataLayer.Models;
-using DataLayer.Responses;
+
 
 namespace BusinessLayer.Interfaces
 {

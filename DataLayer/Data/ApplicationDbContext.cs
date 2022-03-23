@@ -10,7 +10,7 @@ namespace DataLayer.Data
 
         }
 
-        public DbSet<User> Users { get; set; }
+        public DbSet<Userr> Users { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
@@ -20,7 +20,8 @@ namespace DataLayer.Data
         public DbSet<WorkingDesk> WorkingDesks { get; set; }
         public DbSet<BookingType> BookingTypes { get; set; }
         public DbSet<Office> Offices { get; set; }
-
+        public DbSet<State> States { get; set; }
+        
         public DbSet<City> Cities { get; set; }
 
     }

@@ -12,6 +12,6 @@ namespace DataLayer.Models
         public Country? Country { get; set; }
 
         [JsonIgnore]
-        public ICollection<User>? Users { get; set; }
+        public ICollection<Userr>? Users { get; set; }
     }
 }

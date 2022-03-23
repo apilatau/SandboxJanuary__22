@@ -1,13 +1,19 @@
 ﻿using DataLayer.Data;
 using DataLayer.IRepositories;
 using DataLayer.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DataLayer.Repositories
 {
-    public class MapRepository : RepositoryBase<Map>, IMapRepository
+    public class MapRepositoRy : RepositoryBase<Map>, IMapRepository
     {
-        public MapRepository(ApplicationDbContext dbContext) : base(dbContext)
+        public MapRepositoRy(ApplicationDbContext dbContext) : base(dbContext)
         {
+
         }
     }
 }

@@ -9,7 +9,7 @@ namespace DataLayer.Models
 
         public int UserId { get; set; }
         [JsonIgnore]
-        public User? User { get; set; }
+        public Userr? User { get; set; }
 
         public string EventType { get; set; }
         public string ObjectName { get; set; }

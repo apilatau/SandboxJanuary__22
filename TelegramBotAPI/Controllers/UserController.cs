@@ -19,14 +19,14 @@ namespace TelegramBotAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<User> AddUser(User user)
+        public async Task<Userr> AddUser(Userr user)
         {
             return await _userService.AddAsync(user);
         }
 
-        [HttpGet]
-        [Authorize]
-        public async Task<List<User>> GetUsers()
+        [HttpGet("getallusers")]
+
+        public async Task<List<Userr>> GetUsers()
         {
             return await _userService.ListAsync();
         }
@@ -41,6 +41,9 @@ namespace TelegramBotAPI.Controllers
 
             return Ok(response);
         }
+
+        [HttpDelete("delete")]
+        public async Task DeleteAsync(Userr user) => await _userService.DeleteAsync(user);
     }
 }
 

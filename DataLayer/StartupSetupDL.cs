@@ -13,6 +13,12 @@ namespace DataLayer
             services.AddTransient<IBookingTypeRepository, BookingTypeRepository>();
             services.AddTransient<IRoleRepository, RoleRepository>();
             services.AddTransient<IWorkingDeskRepository, WorkingDeskRepository>();
+            services.AddTransient<IStateRepository, StateRepository>();
+            services.AddTransient<IDeskTypeRepository, DeskTypeRepository>();
+            services.AddTransient<ICountryRepository, CountryRepository>();
+            services.AddTransient<ICityRepository, CityRepository>();
+            services.AddTransient<IMapRepository, MapRepositoRy>();
+            services.AddTransient<IOfficeRepository, OfficeRepository>();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.Interfaces;
 using DataLayer.IRepositories;
 using DataLayer.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -21,7 +22,7 @@ namespace BusinessLayer
             _appSettings = new AppSettings();
         }
 
-        public async Task<User> AddAsync(User user)
+        public async Task<Userr> AddAsync(Userr user)
         {
             return await _userRepository.AddAsync(user);
         }
@@ -42,7 +43,7 @@ namespace BusinessLayer
             return new AuthenticateResponse(user, token);
         }
 
-        private string generateJwtToken(User user, Role role)
+        private string generateJwtToken(Userr user, Role role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes("401b09eab3c013d4ca54922bb802bec8fd5318192b0a75f201d8b3727429090fb337591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1");
@@ -61,18 +62,18 @@ namespace BusinessLayer
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task DeleteAsync(User user) => await _userRepository.DeleteAsync(user);
+        public async Task DeleteAsync(Userr user) => await _userRepository.DeleteAsync(user);
 
-        public async Task<User> GetByIdAsync(int id)
+        public async Task<Userr> GetByIdAsync(int id)
         {
             return await _userRepository.GetByIdAsync(id);
         }
 
-        public async Task<List<User>> ListAsync()
+        public async Task<List<Userr>> ListAsync()
         {
             return await _userRepository.ListAsync();
         }
 
-        public async Task UpdateAsync(User user) => await _userRepository.UpdateAsync(user);
+        public async Task UpdateAsync(Userr user) => await _userRepository.UpdateAsync(user);
     }
 }

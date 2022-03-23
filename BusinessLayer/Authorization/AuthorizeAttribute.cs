@@ -16,7 +16,7 @@ namespace BusinessLayer.Authorization
             if (allowAnonymous)
                 return;
 
-            var employee = context.HttpContext.Items["User"] as User;
+            var employee = context.HttpContext.Items["User"] as Userr;
             if (employee == null)
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
         }

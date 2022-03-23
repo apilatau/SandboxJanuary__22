@@ -18,7 +18,7 @@ namespace BusinessLayer.Interfaces
            _roleRepository = roleRepository;
             _appSettings =new AppSettings();
 
-    }
+        }
 
         public async Task<Role> AddAsync(Role role)
         {

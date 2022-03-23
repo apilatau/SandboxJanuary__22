@@ -9,7 +9,7 @@
         public string Role { get; set; }
 
 
-        public AuthenticateResponse(User user, string token)
+        public AuthenticateResponse(Userr user, string token)
         {
             Email = user.Email;
             Token = token;

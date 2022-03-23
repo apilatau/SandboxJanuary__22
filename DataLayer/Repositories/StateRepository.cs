@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace DataLayer.Repositories
 {
-    public class CountryRepository : RepositoryBase<Country>, ICountryRepository
+    public class StateRepository : RepositoryBase<State>, IStateRepository
     {
-        public CountryRepository(ApplicationDbContext dbContext) :base(dbContext)
+        public StateRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
 
         }
